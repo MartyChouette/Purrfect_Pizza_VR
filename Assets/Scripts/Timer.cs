@@ -1,38 +1,83 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 namespace TimingTools
 {
-    public class Timer : MonoBehaviour
+    public class Timer
     {
-        private float time;
-        private float timeRemaining;
+        private float _time;
+        private float _timeRemaining;
         
+        public Timer()
+        {
+            _time = 0;
+            _timeRemaining = 0;
+        }
         public Timer(float t)
         {
-            time = t;
-            timeRemaining = time;
+            _time = t;
+            _timeRemaining = _time;
         }
 
-        public bool isRunning()
+        /*
+        Check and update the remaining time, by counting down the initial set time
+        - return true if time is still ticking down
+        - return false if time runs out
+        */
+        public bool isCountingDown()
         {
-            if (timeRemaining > 0)
+            if (_timeRemaining > 0)
             {
-                timeRemaining -= Time.deltaTime;
+                _timeRemaining -= Time.deltaTime;
                 return true;
             }
             return false;
         }
 
+        public void isTiming()
+        {
+            _timeRemaining += Time.deltaTime;
+        }
+
+        // Reset the time remaining to initial set time
         public void reset()
         {
-            if (timeRemaining <= 0)
+            if (_timeRemaining <= 0)
             {
-                timeRemaining = time;
+                _timeRemaining = _time;
             }
         }
 
-        //TODO: Create a function that returns a string of time in a format of minutes and seconds (00:00)
+        // Get the float number of minutes left in the time remaining
+        private float minute() 
+        {
+            return Mathf.FloorToInt(_timeRemaining / 60);
+        }
+
+        // Get the float number of seconds left in the time remaining
+        private float second() 
+        {
+            return Mathf.FloorToInt(_timeRemaining % 60);
+        }
+
+        /*
+        Update timer text to display in the scene
+        - Overloaded to 3 different text types: TextMeshProUGUI, TMP_Text, and Text
+        */
+        public void updateTimerText(TextMeshProUGUI timerText) // Text Mesh Pro, part of UI components
+        {
+            timerText.text = string.Format("{0:00}:{1:00}", minute(), second());
+        }
+        public void updateTimerText(TMP_Text timerText) // Text Mesh Pro, part of 3D Object components
+        {
+            timerText.text = string.Format("{0:00}:{1:00}", minute(), second());
+        }
+        public void updateTimerText(Text timerText) // simple Text, part of UI components (common with older Unity version)
+        {
+            timerText.text = string.Format("{0:00}:{1:00}", minute(), second());
+        }
     }
 }
