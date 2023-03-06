@@ -10,34 +10,51 @@ namespace TimingTools
     {
         private float _time;
         private float _timeRemaining;
+        private bool _isCountingDown;
         
         public Timer()
         {
             _time = 0;
             _timeRemaining = 0;
         }
-        public Timer(float t)
+        public Timer(float time, bool countDown)
         {
-            _time = t;
-            _timeRemaining = _time;
+            _time = time;
+            _isCountingDown = countDown;
+            if (_isCountingDown)
+                _timeRemaining = _time;
+            else
+                _timeRemaining = 0;
         }
 
         /*
-        Check and update the remaining time, by counting down the initial set time
-        - return true if time is still ticking down
+        Check and update the remaining time, by counting up/down the time
+        - return true if time is still ticking up/down
         - return false if time runs out
         */
-        public bool isCountingDown()
+        public bool isTiming()
         {
-            if (_timeRemaining > 0)
+            if (_isCountingDown)
             {
-                _timeRemaining -= Time.deltaTime;
-                return true;
+                if (_timeRemaining > 0)
+                {
+                    _timeRemaining -= Time.deltaTime;
+                    return true;
+                }
+                return false;
             }
-            return false;
+            else
+            {
+                if (_timeRemaining < _time)
+                {
+                    _timeRemaining += Time.deltaTime;
+                    return true;
+                }
+                return false;
+            }
         }
 
-        public void isTiming()
+        public void isRunning()
         {
             _timeRemaining += Time.deltaTime;
         }
@@ -45,9 +62,19 @@ namespace TimingTools
         // Reset the time remaining to initial set time
         public void reset()
         {
-            if (_timeRemaining <= 0)
+            if (_isCountingDown)
             {
-                _timeRemaining = _time;
+                if (_timeRemaining <= 0)
+                {
+                    _timeRemaining = _time;
+                }
+            }
+            else
+            {
+                if (_timeRemaining >= _time)
+                {
+                    _timeRemaining = 0;
+                }
             }
         }
 
