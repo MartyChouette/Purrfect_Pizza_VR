@@ -16,6 +16,10 @@ public class TaskManager : MonoBehaviour
     public ChefTaskY chefY;
     public ChefTaskZ chefZ;
 
+    public GameObject uiPrefab;
+    protected Canvas taskScreen;
+    protected GameObject taskui;
+
 
     // Start is called before the first frame update
     void Start()
