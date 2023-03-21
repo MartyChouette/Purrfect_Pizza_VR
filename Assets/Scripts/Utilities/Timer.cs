@@ -106,5 +106,10 @@ namespace TimingTools
         {
             timerText.text = string.Format("{0:00}:{1:00}", minute(), second());
         }
+
+        public float getTimeRemaining()
+        {
+            return _timeRemaining;
+        }
     }
 }
