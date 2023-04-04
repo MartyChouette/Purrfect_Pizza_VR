@@ -2,45 +2,53 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TimingTools;
 
 public class ChefTaskY : MonoBehaviour
 {
     public bool haveTask = false;
     public string currentTask;
-    public float time = 5;
-    public Slider progressBar;
+    [SerializeField] private float _time = 5;
+    private Slider _progressBar;
     private Timer _timer;
 
     private void Awake()
     {
-        progressBar.gameObject.SetActive(false);
+        _progressBar = GetComponentInChildren<Slider>();
+        _progressBar.gameObject.SetActive(false);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        _timer = new Timer(time: time, countDown: false);
+        _timer = GetComponent<Timer>();
+        _timer.timeLimit = _time;
+        //_timer = GetComponent<Timer>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        working();
+    }
+
+    private void working()
+    {
         if (haveTask)
         {
-            progressBar.gameObject.SetActive(true);
-            if (_timer.isTiming())
+            _progressBar.gameObject.SetActive(true);
+            _timer.start();
+            if (!_timer.isEnded)
             {
                 // Start cooking
-                progressBar.value = _timer.getTimeRemaining() / time;
+                _progressBar.value = _timer.timeRemaining / _time;
 
                 // If headchef yell/throw stuff at souschef then reduce time
             }
             else
             {
                 // Reset the timer when the souschef finished and assign new task
-                progressBar.gameObject.SetActive(false);
-                progressBar.value = 0;
+                _progressBar.gameObject.SetActive(false);
+                _progressBar.value = 0;
                 haveTask = false;
                 _timer.reset();
             }
