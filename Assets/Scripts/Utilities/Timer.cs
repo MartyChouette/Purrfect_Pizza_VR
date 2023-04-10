@@ -9,6 +9,16 @@ public class Timer : MonoBehaviour
     private float _timeLimit;
     private float _timeRemaining;
     private bool _isTiming = false;
+    private Slider _progressBar;
+
+    void Awake()
+    {
+        _progressBar = GetComponentInChildren<Slider>();
+        if (_progressBar != null)
+        {
+            _progressBar.gameObject.SetActive(false);
+        }
+    }
 
     void Update()
     {
@@ -17,6 +27,10 @@ public class Timer : MonoBehaviour
             if (_timeRemaining < _timeLimit)
             {
                 _timeRemaining += Time.deltaTime;
+                if (_progressBar != null)
+                {
+                    _progressBar.value = _timeRemaining / _timeLimit;
+                }
             }
             else
             {
@@ -30,6 +44,10 @@ public class Timer : MonoBehaviour
         if (!_isTiming && _timeRemaining <= 0)
         {
             _isTiming = true;
+            if (_progressBar != null)
+            {
+                _progressBar.gameObject.SetActive(true);
+            }
         }
         else
         {
@@ -68,6 +86,11 @@ public class Timer : MonoBehaviour
         {
             _timeRemaining = 0;
             _isTiming = false;
+            if (_progressBar != null)
+            {
+                _progressBar.gameObject.SetActive(false);
+                _progressBar.value = 0;
+            }
         }
         else
         {
@@ -75,11 +98,11 @@ public class Timer : MonoBehaviour
         }
     }
 
-    public bool isEnded
+    public bool stopped
     {
         get
         {
-            return _timeRemaining >= _timeLimit;
+            return _timeRemaining <= 0 && !_isTiming;
         }
     }
 

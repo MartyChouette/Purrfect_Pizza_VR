@@ -24,4 +24,12 @@ public class Selectable : MonoBehaviour
         _isSelected = !_isSelected;
         _buttonImage.color = (_isSelected)? _selectedColor : _unselectedColor;
     }
+
+    public bool selected
+    {
+        get
+        {
+            return _isSelected;
+        }
+    }
 }

@@ -25,4 +25,9 @@ public class DisplayTimer : MonoBehaviour
     {
         _timer.updateTimerText(_timerText);
     }
+
+    private void OnDisable()
+    {
+        LevelManager.LevelBegin -= updateTime;
+    }
 }

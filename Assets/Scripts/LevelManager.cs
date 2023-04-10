@@ -9,6 +9,6 @@ public class LevelManager : MonoBehaviour
 
     private void Update()
     {
-        LevelBegin?.Invoke(); // Similar to... if(LevelBegin != null) {LevelBegin();}
+        LevelBegin?.Invoke(); 
     }
 }
