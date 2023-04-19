@@ -6,4 +6,5 @@ using UnityEngine;
 public class IngredientsSO : ScriptableObject
 {
     public string name;
+    public GameObject model; 
 }
