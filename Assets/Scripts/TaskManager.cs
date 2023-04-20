@@ -13,36 +13,17 @@ public class TaskUI
 
 public class TaskManager : MonoBehaviour
 {
-    /*
-    public string[] tasks = new string[] {
-        "Cut Onions",
-        "Grill Meat",
-        "Cook Eggs",
-        "Mash Potatoes",
-        "Sear Veggies"
-    };
-
-    public ChefTaskY chefY;
-    public ChefTaskZ chefZ;
-
-    public GameObject uiPrefab;
-    protected Canvas taskScreen;
-    protected GameObject taskui;
-    */
     public static TaskManager Instance;
     [SerializeField] private TaskUI _xTaskUI;
     [SerializeField] private TaskUI _yTaskUI;
     [SerializeField] private GameObject _selectablePrefab;
-    private List<Base> pizzaBases = new List<Base>();
-    public Dictionary<GameObject, Base> _chefXTasks {get; private set;} = new Dictionary<GameObject, Base>();
-    public Dictionary<GameObject, Base> _chefYTasks {get; private set;} = new Dictionary<GameObject, Base>();
+    [HideInInspector] public List<Dough> _doughs {get; private set;} = new List<Dough>();
 
     void Awake() => Instance = this;
     
     void Start()
     {
-        collectSauceBases();
-        displayTasksAtStart();
+        
     }
 
     // Update is called once per frame
@@ -51,32 +32,47 @@ public class TaskManager : MonoBehaviour
         
     }
 
-    private void collectSauceBases()
+    /*
+    private void collectPizzaDoughs()
     {
         foreach (Pizza type in OrderManager.Instance.pizzaTypes)
         {   
             bool isExisted = false;
-            foreach (Base pizzaBase in pizzaBases)
+            foreach (Dough dough in _doughs)
             {
-                if (pizzaBase.name == type.pizzaBase.name)
+                if (dough.name == type.dough.name)
                 {
                     isExisted = true;
                 }
             }
             if (!isExisted)
             {
-                pizzaBases.Add(type.pizzaBase);
+                _doughs.Add(type.dough);
             }
         }
     }
 
     private void displayTasksAtStart()
     {
-        foreach (Base pizzaBase in pizzaBases)
+        for (int i = 0; i < _doughs.Count; i++)
         {
-            _selectablePrefab.GetComponentInChildren<Text>().text = pizzaBase.name;
-            _chefXTasks.Add(Instantiate(_selectablePrefab, _xTaskUI.content.transform), pizzaBase);
-            _chefYTasks.Add(Instantiate(_selectablePrefab, _yTaskUI.content.transform), pizzaBase);
+            GameObject x = Instantiate(_selectablePrefab, _xTaskUI.content.transform);
+            x.GetComponent<Selectable>().Init("x"+i, _doughs[i]);
+            GameObject y = Instantiate(_selectablePrefab, _yTaskUI.content.transform);
+            y.GetComponent<Selectable>().Init("y"+i, _doughs[i]);
         }
     }
+
+    public event Action<string, Dough> onTaskSelected;
+    public void TaskSelected(string id, Dough dough)
+    {
+        onTaskSelected?.Invoke(id, dough);
+    }
+
+    public event Action<string> onTaskUnselected;
+    public void TaskUnselected(string id)
+    {
+        onTaskUnselected?.Invoke(id);
+    }
+    */
 }

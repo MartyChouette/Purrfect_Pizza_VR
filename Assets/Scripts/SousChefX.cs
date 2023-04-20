@@ -6,48 +6,45 @@ using UnityEngine.UI;
 public class SousChefX : MonoBehaviour
 {
     [SerializeField] private float _time;
-    private Timer _timer;
-    private bool haveTask = false;
+    [SerializeField] private GameObject _pizzaSpawnPoint;
+    private Slider _progressBar;
+    private int orderIndex;
+    private bool isMakingPizza;
 
-    private void Awake()
+    void Awake()
     {
-        _timer = GetComponent<Timer>();
-        _timer.timeLimit = _time;
+        _progressBar = GetComponentInChildren<Slider>();
+        _progressBar.gameObject.SetActive(false);
+    }
+
+    void Start()
+    {
+        orderIndex = 0;
+        isMakingPizza = false;
     }
 
     void Update()
     {
-        working();
+        onPizzaCreate();
     }
 
-    private void working()
+    private void onPizzaCreate()
     {
-        if (haveTask)
+        if (!isMakingPizza)
         {
-            if (_timer.stopped)
-            {
-                // Instatiate the pizza base object
-                _timer.start();
-            }
+            isMakingPizza = true;
+            Timer.Create(onPizzaComplete, _time, _progressBar);
         }
     }
 
-    public void assignTask()
+    private void onPizzaComplete()
     {
-        if (!haveTask)
+        Instantiate(OrderManager.Instance.orderList[orderIndex].doughPrefab, _pizzaSpawnPoint.transform);
+        isMakingPizza = false;
+        orderIndex++;
+        if (orderIndex >= OrderManager.Instance.orderList.Count)
         {
-            foreach (var task in TaskManager.Instance._chefXTasks)
-            {
-                if (task.Key.GetComponent<Selectable>().selected)
-                {
-                    haveTask = true;
-                    _timer.start();
-                }
-            }
-        }
-        else
-        {
-            // Display a message that souschef is currently completing a task
+            orderIndex = 0;
         }
     }
 }

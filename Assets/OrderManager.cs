@@ -5,7 +5,6 @@ using System;
 
 public class OrderManager : MonoBehaviour
 {
-    //public static event Action Order;
     public static OrderManager Instance;
     [SerializeField] private Orders _orders;
     
