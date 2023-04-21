@@ -25,7 +25,7 @@ public class XRInstantiateGrabbableObject : XRBaseInteractable
     protected override void OnSelectEntered(SelectEnterEventArgs args)
     {
         //Instantiate object
-        GameObject newObject = Instantiate(grabbableObject, transformToInstantiate.position, Quaternion.identity);
+        GameObject newObject = Instantiate(grabbableObject, transformToInstantiate.position + new Vector3(0, 0, 1), Quaternion.identity);
 
         //Get grab interactable from prefab
         XRGrabInteractable objectInteractable = newObject.GetComponent<XRGrabInteractable>();
