@@ -15,7 +15,7 @@ public class CreateToppingPrefabs : MonoBehaviour
 
     private void loadOriginalPrefabs()
     {
-        _originalPrefabs = Resources.LoadAll("Pizza Constructor/Prefab/Topping", typeof(GameObject));
+        _originalPrefabs = Resources.LoadAll("Pizza Constructor/Prefab/Ingredients", typeof(GameObject));
         if (_originalPrefabs.Length > 0)
         {
             Debug.Log("Succesfully Loaded: " + _originalPrefabs.Length + " Original Prefabs");
@@ -39,7 +39,7 @@ public class CreateToppingPrefabs : MonoBehaviour
             go.GetComponent<MeshRenderer>().material = _material;
             go.GetComponent<MeshCollider>().convex = true;
 
-            string localPath = "Assets/Prefabs/Pizzas/Topping";
+            string localPath = "Assets/Prefabs/Pizzas/Ingredients";
             if (AssetDatabase.FindAssets(prefab.name, new[] {localPath}).Length > 0)
             {
                 localPath += "/" + prefab.name + ".prefab";

@@ -15,7 +15,7 @@ public class CreateDoughPrefabs : MonoBehaviour
 
     private void loadOriginalPrefabs()
     {
-        _originalPrefabs = Resources.LoadAll("Pizza Constructor/Prefab/Pizza Dough", typeof(GameObject));
+        _originalPrefabs = Resources.LoadAll("Pizza Constructor/Prefab/Pizza Doughs", typeof(GameObject));
         if (_originalPrefabs.Length > 0)
         {
             Debug.Log("Succesfully Loaded: " + _originalPrefabs.Length + " Original Prefabs");
@@ -45,7 +45,7 @@ public class CreateDoughPrefabs : MonoBehaviour
                 child.convex = true;
             }
 
-            string localPath = "Assets/Prefabs/Pizzas/Pizza Dough";
+            string localPath = "Assets/Prefabs/Pizzas/Pizza Doughs";
             if (AssetDatabase.FindAssets(prefab.name, new[] {localPath}).Length > 0)
             {
                 localPath += "/" + prefab.name + ".prefab";

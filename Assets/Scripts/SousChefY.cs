@@ -40,7 +40,8 @@ public class SousChefY : MonoBehaviour
 
     private void onPizzaComplete()
     {
-        Instantiate(OrderManager.Instance.orderList[orderIndex].doughPrefab, _pizzaSpawnPoint.transform);
+        //Instantiate(OrderManager.Instance.orderList[orderIndex].doughPrefab, _pizzaSpawnPoint.transform);
+        OrderManager.Instance.orderList[orderIndex].instantiatePizza(_pizzaSpawnPoint.transform);
         isMakingPizza = false;
         orderIndex++;
         if (orderIndex >= OrderManager.Instance.orderList.Count)
