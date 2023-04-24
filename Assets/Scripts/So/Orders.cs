@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Orders in Level", menuName = "Level Orders")]
+[CreateAssetMenu(fileName = "New Level Orders", menuName = "Level Orders")]
 public class Orders : ScriptableObject
 {
     public int numberOfOrders;
-    public List<Pizza> pizzaTypes = new List<Pizza>();
-    [HideInInspector] public List<Pizza> orderList;
+    public List<Pizza> chefXPizzaTypes = new List<Pizza>();
+    public List<Pizza> chefYPizzaTypes = new List<Pizza>();
+    [HideInInspector] public List<Pizza> chefXOrderList {get;} = new List<Pizza>();
+    [HideInInspector] public List<Pizza> chefYOrderList {get;} = new List<Pizza>();
 
     private void OnEnable()
     {
@@ -15,20 +17,23 @@ public class Orders : ScriptableObject
 
     private void OnDisable()
     {
-        orderList.Clear();
+        chefXOrderList.Clear();
+        chefYOrderList.Clear();
     }
 
     private void createList()
     {
-        orderList = new List<Pizza>();
-        for (int i = 0; i < numberOfOrders; i++)
+        if (chefXPizzaTypes.Count > 0 && chefYPizzaTypes.Count > 0)
         {
-            orderList.Add(getPizzaType(Random.Range(0, pizzaTypes.Count)));
+            for (int i = 0; i < numberOfOrders; i++)
+            {
+                chefXOrderList.Add(chefXPizzaTypes[Random.Range(0, chefXPizzaTypes.Count)]);
+                chefYOrderList.Add(chefYPizzaTypes[Random.Range(0, chefYPizzaTypes.Count)]);
+            }
         }
-    }
-
-    private Pizza getPizzaType(int type)
-    {
-        return pizzaTypes[type];
+        else
+        {
+            Debug.Log("Chef X and/or Chef Y pizza types list is empty.", this);
+        }
     }
 }

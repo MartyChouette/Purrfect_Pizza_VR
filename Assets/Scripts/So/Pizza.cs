@@ -13,6 +13,22 @@ public class Pizza : ScriptableObject
     public GameObject doughPrefab;
     public Ingredient[] recipe;
 
+    private void OnValidate()
+    {
+        if (doughPrefab == null)
+        {
+            Debug.Log(this.name + " scriptable object is missing a dough prefab.", this);
+        }
+
+        foreach (var item in recipe)
+        {
+            if (item.ingredientPrefab == null)
+            {
+                Debug.Log(this.name + " scriptable object is missing an ingredient prefab.", this);
+            }
+        }
+    }
+
     public void instantiatePizza(Transform parentTransform)
     {
         GameObject go = Instantiate(doughPrefab, parentTransform);

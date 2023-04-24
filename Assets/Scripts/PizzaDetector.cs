@@ -18,25 +18,30 @@ public class PizzaDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform.parent.gameObject.tag == "Pizza" && other.name == "Ingredients")
+        if (other.transform.parent.gameObject.tag == "Pizza" & other.name == "Ingredients")
         {
+            GameObject parent = this.transform.parent.gameObject;
             if (_serviceTable)
             {
-                OrderManager.Instance.checkOrder(other.gameObject);
+                parent.GetComponent<ServiceSurface>().onPizzaDetected(other.gameObject);
             }
             
             if(_prepTable)
             {
-                OrderManager.Instance.displayOrderRecipe(other.gameObject);
+                parent.GetComponent<PrepSurface>().onPizzaDetected(other.gameObject);
             }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.transform.parent.gameObject.tag == "Pizza" && other.name == "Ingredients")
+        if (other.transform.parent.gameObject.tag == "Pizza" & other.name == "Ingredients")
         {
-            OrderManager.Instance.unlistRecipe();
+            GameObject parent = this.transform.parent.gameObject;
+            if (_prepTable)
+            {
+                parent.GetComponent<PrepSurface>().onPizzaUndetected();
+            }
         }
     }
 }

@@ -1,96 +1,71 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using System;
 
 public class OrderManager : MonoBehaviour
 {
     public static OrderManager Instance;
     [SerializeField] private Orders _orders;
-    [SerializeField] private GameObject _recipeUIContent;
-    [SerializeField] private Text _recipeTextPrefab;
-    private List<Text> _recipeDisplayList = new List<Text>();
+    public Dictionary<string, Pizza> allPizzaTypes {get;} = new Dictionary<string, Pizza>();
+    public Dictionary<string, GameObject> allIngredients {get;} = new Dictionary<string, GameObject>();
+
+    private void OnValidate()
+    {
+        if (_orders == null)
+        {
+            Debug.Log("Order Manager is missing an Orders scriptable object.", this.gameObject);
+        }
+    }
     
-    void Awake() => Instance = this;
-
-    public List<Pizza> orderList
+    private void Awake()
     {
-        get
-        {
-            return _orders.orderList;
-        }
+        Instance = this;
+        collectAllPizzaTypesAndIngredients();
     }
 
-    public List<Pizza> pizzaTypes
+    private void Start()
     {
-        get
-        {
-            return _orders.pizzaTypes;
-        }
+        
     }
 
-    public List<GameObject> allIngredients
+    public List<Pizza> orderList(Character.Characters character)
     {
-        get
+        return (character == 0)? _orders.chefXOrderList : _orders.chefYOrderList;
+    }
+
+    public List<Pizza> pizzaTypes(Character.Characters character)
+    {
+        return (character == 0)? _orders.chefXPizzaTypes : _orders.chefYPizzaTypes;
+    }
+
+    private void collectAllPizzaTypesAndIngredients()
+    {
+        foreach (Pizza item in pizzaTypes(Character.Characters.SousChefX))
         {
-            List<GameObject> list = new List<GameObject>();
-            foreach (Pizza type in pizzaTypes)
+            if (!allPizzaTypes.ContainsKey(item.name))
             {
-                foreach (var ingredient in type.recipe)
+                allPizzaTypes.Add(item.name, item);
+            }
+        }
+        foreach (Pizza item in pizzaTypes(Character.Characters.SousChefY))
+        {
+            if (!allPizzaTypes.ContainsKey(item.name))
+            {
+                allPizzaTypes.Add(item.name, item);
+            }
+        }
+
+        foreach (Pizza type in allPizzaTypes.Values)
+        {
+            foreach (var ingredient in type.recipe)
+            {
+                if (!allIngredients.ContainsKey(ingredient.ingredientPrefab.name))
                 {
-                    list.Add(ingredient.ingredientPrefab);
+                    Debug.Log(ingredient.ingredientPrefab.name);
+                    allIngredients.Add(ingredient.ingredientPrefab.name, ingredient.ingredientPrefab);
                 }
             }
-            return list;
         }
-    }
-
-    public void checkOrder(GameObject pizzaIngredientsObject)
-    {
-        bool isMissingIngredient = false;
-        Dictionary<string, int> addedIngredients = pizzaIngredientsObject.GetComponent<IngredientsDetector>().ingredients;
-        GameObject pizza = pizzaIngredientsObject.transform.parent.gameObject;
-        // Go through the ingredients added on the pizza by checking Ingredient object child of the pizza game object
-        foreach (var requiredIngredient in pizzaTypes.Find(x => x.name.Contains(pizza.name)).recipe)
-        {
-            if (addedIngredients.ContainsKey(requiredIngredient.ingredientPrefab.name))
-            {
-                if (addedIngredients[requiredIngredient.ingredientPrefab.name] < requiredIngredient.amount)
-                {
-                    Debug.Log("Short of " + requiredIngredient.ingredientPrefab.name);
-                    isMissingIngredient = true;
-                }
-            }
-            else
-            {
-                Debug.Log("Missing " + requiredIngredient.ingredientPrefab.name + "; " + addedIngredients.Count);
-                isMissingIngredient = true;
-            }
-        }
-
-        if (!isMissingIngredient)
-        {
-            Timer.Create(() => Destroy(pizza), 3, null);
-        }
-    }
-
-    public void displayOrderRecipe(GameObject pizzaIngredientsObject)
-    {
-        GameObject pizza = pizzaIngredientsObject.transform.parent.gameObject;
-        foreach (var requiredIngredient in pizzaTypes.Find(x => x.name.Contains(pizza.name)).recipe)
-        {
-            _recipeTextPrefab.text = requiredIngredient.amount + " x " + requiredIngredient.ingredientPrefab.name;
-            _recipeDisplayList.Add(Instantiate(_recipeTextPrefab, _recipeUIContent.transform));
-        }
-    }
-
-    public void unlistRecipe()
-    {
-        foreach (var ingredientDetail in _recipeDisplayList)
-        {
-            Destroy(ingredientDetail.gameObject);
-        }
-        _recipeDisplayList.Clear();
     }
 }

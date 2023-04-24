@@ -13,8 +13,9 @@ public class IngredientsDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider go)
     {
-        if (go.tag == "Ingredient")
+        if (this.name == "Ingredients" & go.tag == "Ingredient")
         {
+            Debug.Log(go.name + " Added");
             go.transform.SetParent(this.transform);
             go.GetComponent<Rigidbody>().isKinematic = true;
 
