@@ -3,9 +3,12 @@ using UnityEngine.XR.Interaction.Toolkit;
 using EzySlice;
 public class Slicer : MonoBehaviour
 {
+
+    
     public Material materialAfterSlice;
     public LayerMask sliceMask;
     public bool isTouched;
+    
 
     private void Update()
     {
@@ -17,6 +20,10 @@ public class Slicer : MonoBehaviour
 
             foreach (Collider objectToBeSliced in objectsToBeSliced)
             {
+                //materialAfterSlice = objectToBeSliced.gameObject.GetComponent<Flesh>().material;
+                
+
+
                 SlicedHull slicedObject = SliceObject(objectToBeSliced.gameObject, materialAfterSlice);
 
                 GameObject upperHullGameobject = slicedObject.CreateUpperHull(objectToBeSliced.gameObject, materialAfterSlice);
@@ -37,8 +44,10 @@ public class Slicer : MonoBehaviour
     {
         obj.AddComponent<MeshCollider>().convex = true;
         obj.AddComponent<Rigidbody>();
-        obj.AddComponent<XRGrabInteractable>();
+        Component comp = obj.AddComponent<XRGrabInteractable>();
         obj.layer = LayerMask.NameToLayer("Sliceable");
+        //comp.InteractionManager( = "None";
+
     }
 
     private SlicedHull SliceObject(GameObject obj, Material crossSectionMaterial = null)
