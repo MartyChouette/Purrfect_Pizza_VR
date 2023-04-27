@@ -51,10 +51,10 @@ public class GeneralTimer : MonoBehaviour
             // StartCoroutine(PlaySound());
         }
 
-        else if (currentTime <= 5f) // Adjust the threshold for when to start the shake animation
-        {
-            StartCoroutine(ShakeClock());
-        }
+        // else if (currentTime <= 5f) // Adjust the threshold for when to start the shake animation
+        // {
+        //     StartCoroutine(ShakeClock());
+        // }
 
 
         setTimerText();
@@ -66,25 +66,25 @@ public class GeneralTimer : MonoBehaviour
         timerText.text =  timePlaying.ToString("mm':'ss':'ff");
     }
 
-   private IEnumerator ShakeClock()
-    {
-        Vector3 originalPosition = clockTransform.localPosition; // Store the original position of the parent game object
-        float shakeTimer = 0f;
-        while (shakeTimer < 5)
-        {
-            float offsetX = UnityEngine.Random.Range(-1f, 1f) * shakeIntensity;
-            float offsetY = UnityEngine.Random.Range(-1f, 1f) * shakeIntensity;
+//    private IEnumerator ShakeClock()
+//     {
+//         Vector3 originalPosition = clockTransform.localPosition; // Store the original position of the parent game object
+//         float shakeTimer = 0f;
+//         while (shakeTimer < 5)
+//         {
+//             float offsetX = UnityEngine.Random.Range(-1f, 1f) * shakeIntensity;
+//             float offsetY = UnityEngine.Random.Range(-1f, 1f) * shakeIntensity;
 
-            // Apply the shake offset to the parent game object
-            clockTransform.localPosition = originalPosition + new Vector3(offsetX, offsetY, 0f);
+//             // Apply the shake offset to the parent game object
+//             clockTransform.localPosition = originalPosition + new Vector3(offsetX, offsetY, 0f);
 
-            shakeTimer += Time.deltaTime;
-            yield return null;
-        }
+//             shakeTimer += Time.deltaTime;
+//             yield return null;
+//         }
 
-        // Reset the position of the parent game object
-        clockTransform.localPosition = originalPosition;
-    }
+//         // Reset the position of the parent game object
+//         clockTransform.localPosition = originalPosition;
+//     }
 
 
     // IEnumerator PlaySound()
