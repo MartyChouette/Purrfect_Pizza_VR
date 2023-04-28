@@ -18,7 +18,7 @@ public class PizzaDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform.parent.gameObject.tag == "Pizza" & other.name == "Ingredients")
+        if (other.tag == "Pizza")
         {
             GameObject parent = this.transform.parent.gameObject;
             if (_serviceTable)
@@ -35,12 +35,17 @@ public class PizzaDetector : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.transform.parent.gameObject.tag == "Pizza" & other.name == "Ingredients")
+        if (other.tag == "Pizza")
         {
             GameObject parent = this.transform.parent.gameObject;
+            if (_serviceTable)
+            {
+                parent.GetComponent<ServiceSurface>().onPizzaUndetected();
+            }
+
             if (_prepTable)
             {
-                parent.GetComponent<PrepSurface>().onPizzaUndetected();
+                parent.GetComponent<PrepSurface>().onPizzaUndetected(other.gameObject);
             }
         }
     }

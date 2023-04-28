@@ -24,11 +24,6 @@ public class OrderManager : MonoBehaviour
         collectAllPizzaTypesAndIngredients();
     }
 
-    private void Start()
-    {
-        
-    }
-
     public List<Pizza> orderList(Character.Characters character)
     {
         return (character == 0)? _orders.chefXOrderList : _orders.chefYOrderList;
@@ -62,7 +57,6 @@ public class OrderManager : MonoBehaviour
             {
                 if (!allIngredients.ContainsKey(ingredient.ingredientPrefab.name))
                 {
-                    Debug.Log(ingredient.ingredientPrefab.name);
                     allIngredients.Add(ingredient.ingredientPrefab.name, ingredient.ingredientPrefab);
                 }
             }

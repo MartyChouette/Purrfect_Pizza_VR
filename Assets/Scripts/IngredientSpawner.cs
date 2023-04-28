@@ -32,7 +32,6 @@ public class IngredientSpawner : MonoBehaviour
 
     private void createSpawnButtons()
     {
-        Debug.Log("Number of all ingredients: " + OrderManager.Instance.allIngredients.Count);
         foreach (GameObject ingredient in OrderManager.Instance.allIngredients.Values)
         {
             Button button = Instantiate(_buttonPrefab, _UIContent.transform);
@@ -45,5 +44,6 @@ public class IngredientSpawner : MonoBehaviour
     {
         GameObject go = Instantiate(ingredient, _spawnPoint.transform);
         go.name = ingredient.name;
+        go.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f); // Change ingredient size
     }
 }

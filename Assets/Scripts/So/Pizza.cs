@@ -34,5 +34,10 @@ public class Pizza : ScriptableObject
         GameObject go = Instantiate(doughPrefab, parentTransform);
         go.name = this.name;
         go.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+
+        foreach (Ingredient ingredient in recipe)
+        {
+            go.GetComponentInChildren<IngredientsDetector>().recipe.Add(ingredient.ingredientPrefab.name, ingredient.amount);
+        } 
     }
 }
