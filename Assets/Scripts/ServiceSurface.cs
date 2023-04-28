@@ -5,10 +5,12 @@ using TMPro;
 
 public class ServiceSurface : MonoBehaviour
 {
-    [SerializeField] private float _timeToDestroy;
+    [SerializeField] private float _checkingTime;
     [SerializeField] private GameObject _correctOrderAnimPrefab;
     [SerializeField] private GameObject _incorrectOrderAnimPrefab;
     [SerializeField] private Messages _checkOrderMessages;
+    [SerializeField] private AudioSource _orderCorrectSFX;
+    [SerializeField] private AudioSource _orderIncorrectSFX;
     private GameObject _incompleteOrderMessage;
 
     private void OnValidate()
@@ -24,6 +26,14 @@ public class ServiceSurface : MonoBehaviour
         if (_checkOrderMessages == null)
         {
             Debug.Log("Service Surface is missing Check Order Messages scriptable object.", this.gameObject);
+        }
+        if (_orderCorrectSFX == null)
+        {
+            Debug.Log("Service Surface is missing Order Correct SFX.", this.gameObject);
+        }
+        if (_orderIncorrectSFX == null)
+        {
+            Debug.Log("Service Surface is missing Order Incorrect SFX.", this.gameObject);
         }
     }
 
@@ -71,11 +81,11 @@ public class ServiceSurface : MonoBehaviour
 
         if (!isMissingIngredient)
         {
-            Timer.Create(() => onPizzaCompleted(pizza), _timeToDestroy, null);
+            Timer.Create(() => onPizzaCompleted(pizza), _checkingTime, null);
         }
         else
         {
-            onPizzaIncomplete();
+            Timer.Create(() => onPizzaIncomplete(), _checkingTime, null);
         }
     }
 
@@ -86,6 +96,7 @@ public class ServiceSurface : MonoBehaviour
         float animDuration = go.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length; // Obtain the duration of the animation.
         go.GetComponentInChildren<TextMeshProUGUI>().text = messages[Random.Range(0, messages.Length)]; // Change the display text to random messages from the scriptable object
         Destroy(pizza);
+        _orderCorrectSFX.Play();
         LevelManager.Instance.addScore();
         Timer.Create(() => Destroy(go), animDuration, null);
     }
@@ -95,5 +106,6 @@ public class ServiceSurface : MonoBehaviour
         string[] messages = _checkOrderMessages.wrongOrderMessages;
         _incompleteOrderMessage = Instantiate(_incorrectOrderAnimPrefab, this.transform);
         _incompleteOrderMessage.GetComponentInChildren<TextMeshProUGUI>().text = messages[Random.Range(0, messages.Length)];
+        _orderIncorrectSFX.Play();
     }
 }

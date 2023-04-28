@@ -8,6 +8,7 @@ public class SousChef : MonoBehaviour
     [SerializeField] private Character _characterSO;
     [SerializeField] private GameObject _pizzaSpawnPoint;
     [SerializeField] private GameObject _progressBar;
+    [SerializeField] private AudioSource[] _meowSounds;
     private Slider _progressBarSlider;
     private Character.Characters _character;
     private float _completionTime;
@@ -61,6 +62,7 @@ public class SousChef : MonoBehaviour
     private void onPizzaComplete()
     {
         OrderManager.Instance.orderList(_character)[_orderIndex].instantiatePizza(_pizzaSpawnPoint.transform);
+        _meowSounds[Random.Range(0, _meowSounds.Length)].Play();
         _isMakingPizza = false;
         _orderIndex++;
         if (_orderIndex >= OrderManager.Instance.orderList(_character).Count)

@@ -22,8 +22,8 @@ public class GeneralTimer : MonoBehaviour
     public bool hasLimit;
     public float timerLimit;
 
-    [Header("Shake Settings")]
-    private float shakeIntensity = 0.1f;
+    //[Header("Shake Settings")]
+    //private float shakeIntensity = 0.1f;
     private Vector3 initialPosition;
 
     private void Awake()
