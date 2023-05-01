@@ -43,6 +43,8 @@ public class SousChef : MonoBehaviour
         _completionTime = _characterSO.completionTime;
         _orderIndex = 0;
         _isMakingPizza = false;
+        OrderManager.Instance.orderList(_character)[_orderIndex].instantiatePizza(_pizzaSpawnPoint.transform);
+
     }
 
     private void Update()
