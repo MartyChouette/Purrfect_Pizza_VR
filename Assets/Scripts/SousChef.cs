@@ -9,11 +9,17 @@ public class SousChef : MonoBehaviour
     [SerializeField] private GameObject _pizzaSpawnPoint;
     [SerializeField] private GameObject _progressBar;
     [SerializeField] private AudioSource[] _meowSounds;
+    [SerializeField] private AudioSource _angryMeowSound;
     private Slider _progressBarSlider;
+    private Image _progressBarFill;
     private Character.Characters _character;
     private float _completionTime;
     private int _orderIndex;
     private bool _isMakingPizza;
+    private bool _isChefAwake;
+    private bool _isCharacteristicUpdatable;
+    private int _currentPhase;
+    private Timer _timerInstance;
 
     private void OnValidate() 
     {
@@ -35,6 +41,8 @@ public class SousChef : MonoBehaviour
     {
         _progressBarSlider = _progressBar.GetComponentInChildren<Slider>();
         _progressBarSlider.gameObject.SetActive(false);
+
+        _progressBarFill = _progressBar.transform.Find("Slider/Fill Area/Fill").gameObject.GetComponent<Image>();
     }
 
     private void Start()
@@ -43,8 +51,10 @@ public class SousChef : MonoBehaviour
         _completionTime = _characterSO.completionTime;
         _orderIndex = 0;
         _isMakingPizza = false;
-        OrderManager.Instance.orderList(_character)[_orderIndex].instantiatePizza(_pizzaSpawnPoint.transform);
-
+        _isChefAwake = true;
+        _isCharacteristicUpdatable = true;
+        _currentPhase = 0;
+        createPizzaAtStart();
     }
 
     private void Update()
@@ -52,24 +62,91 @@ public class SousChef : MonoBehaviour
         onPizzaCreate();
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Pizza" || other.tag == "Ingredient")
+        {
+            onGettingHit();
+        }
+    }
+
     private void onPizzaCreate()
     {
-        if (!_isMakingPizza)
+        if (!_isMakingPizza & _isChefAwake)
         {
             _isMakingPizza = true;
-            Timer.Create(onPizzaComplete, _completionTime, _progressBarSlider);
+            _timerInstance = Timer.Create(onPizzaComplete, _completionTime, _progressBarSlider);
         }
+    }
+
+    private void createPizzaAtStart()
+    {
+        OrderManager.Instance.orderList(_character)[_orderIndex].instantiatePizza(_pizzaSpawnPoint.transform);
+        _orderIndex++;
     }
 
     private void onPizzaComplete()
     {
-        OrderManager.Instance.orderList(_character)[_orderIndex].instantiatePizza(_pizzaSpawnPoint.transform);
-        _meowSounds[Random.Range(0, _meowSounds.Length)].Play();
-        _isMakingPizza = false;
+        OrderManager.Instance.orderList(_character)[_orderIndex].instantiatePizza(_pizzaSpawnPoint.transform); // Spawn the pizza gameobject
+        _meowSounds[Random.Range(0, _meowSounds.Length)].Play(); // Play SFX
+        updateChefCharateristic(); // Update the unique characteristic of each Chef
+        _isMakingPizza = false; 
         _orderIndex++;
+        // Cycle through the same orderList to determine the type of pizza to make whent the reaching the end of orderList
         if (_orderIndex >= OrderManager.Instance.orderList(_character).Count)
         {
             _orderIndex = 0;
         }
+    }
+
+    private void updateChefCharateristic()
+    {
+        if (_isCharacteristicUpdatable)
+        {
+            if (_character == 0) // Chef X
+            {
+                lazinessMeter();
+            }
+            else // Chef Y
+            {
+                // Chef Y characteristic
+            }
+        }
+        _isCharacteristicUpdatable = true;
+    }
+
+    private void lazinessMeter()
+    {
+        _currentPhase++; // Change to next phase of characteristic (getting sleepier)
+        if (_currentPhase < _characterSO.numberOfPhases)
+        {
+            _progressBarFill.color = _characterSO.progressBarColors[_currentPhase];// Change progressBar color
+            _completionTime += _completionTime * _characterSO.characteristicScaler;// set completionTime = completionTime x chracteristicScaler + completionTime
+        }
+        else // The Chef is sleeping
+        {
+            _isChefAwake = false;
+        }
+    }
+
+    private void onGettingHit()
+    {
+        _angryMeowSound.Play();
+        _currentPhase = 0;
+        if (_character == 0) // Chef X
+        {
+            _progressBarFill.color = _characterSO.progressBarColors[_currentPhase];
+            _completionTime = _characterSO.completionTime;
+            if (_timerInstance != null)
+            {
+                _timerInstance.timeLimit = _completionTime;
+            }
+        }
+        else // Chef Y
+        {
+            
+        }
+        _isChefAwake = true;
+        _isCharacteristicUpdatable = false;
     }
 }

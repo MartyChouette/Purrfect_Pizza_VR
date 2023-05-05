@@ -60,6 +60,14 @@ public class Timer
         }
     }
 
+    public float timeLimit
+    {
+        set
+        {
+            _timeLimit = value;
+        }
+    }
+
     private void enableProgressBar()
     {
         if (_progressBar != null)

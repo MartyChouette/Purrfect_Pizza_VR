@@ -10,4 +10,12 @@ public class Character : ScriptableObject
     }
     public Characters character;
     public float completionTime;
+    public Color[] progressBarColors;
+    public float characteristicScaler;
+    [HideInInspector] public int numberOfPhases;
+
+    private void OnValidate()
+    {
+        numberOfPhases = progressBarColors.Length;
+    }
 }

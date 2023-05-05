@@ -5,6 +5,7 @@ using TMPro;
 
 public class ServiceSurface : MonoBehaviour
 {
+    public static ServiceSurface Instance;
     [SerializeField] private float _checkingTime;
     [SerializeField] private GameObject _correctOrderAnimPrefab;
     [SerializeField] private GameObject _incorrectOrderAnimPrefab;
@@ -37,14 +38,36 @@ public class ServiceSurface : MonoBehaviour
         }
     }
 
-    public void onPizzaDetected(GameObject pizzaChildObject)
+    private void Awake() => Instance = this;
+
+    private void Start()
     {
-        checkOrder(pizzaChildObject);
+        _incompleteOrderMessage = null;
     }
 
-    public void onPizzaUndetected()
+    public void onPizzaDetected(GameObject pizzaIngredients)
     {
-        Destroy(_incompleteOrderMessage);
+        pizzaIngredients.GetComponent<IngredientsDetector>().onServiceTable = true;
+        if (_incompleteOrderMessage != null)
+        {
+            disableIncompleteOrderMessage();
+        }
+        checkOrder(pizzaIngredients);
+    }
+
+    public void onPizzaUndetected(GameObject pizzaIngredients)
+    {
+        pizzaIngredients.GetComponent<IngredientsDetector>().onServiceTable = false;
+        disableIncompleteOrderMessage();
+    }
+
+    public void onPizzaUpdated(GameObject pizzaIngredients)
+    {
+        if (_incompleteOrderMessage != null)
+        {
+            disableIncompleteOrderMessage();
+        }
+        checkOrder(pizzaIngredients);
     }
 
     private void checkOrder(GameObject pizzaIngredients)
@@ -90,22 +113,47 @@ public class ServiceSurface : MonoBehaviour
     }
 
     private void onPizzaCompleted(GameObject pizza)
-    { 
+    {
+        // Instantiate popup message gameobject
         string[] messages = _checkOrderMessages.correctOrderMessages;
         GameObject go = Instantiate(_correctOrderAnimPrefab, this.transform); // As soon as this object is instantiated the animation is displayed.
-        float animDuration = go.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length; // Obtain the duration of the animation.
-        go.GetComponentInChildren<TextMeshProUGUI>().text = messages[Random.Range(0, messages.Length)]; // Change the display text to random messages from the scriptable object
-        Destroy(pizza);
+        go.GetComponentInChildren<TextMeshProUGUI>().text = messages[Random.Range(0, messages.Length)]; // Change the default display text to random messages from the scriptable object
+        
+        // Play SFX
         _orderCorrectSFX.Play();
-        LevelManager.Instance.addScore();
+
+        // Destroy popup message gameobject after the animation is over
+        float animDuration = go.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length; // Obtain the duration of the animation.
         Timer.Create(() => Destroy(go), animDuration, null);
+
+        // Add score
+        LevelManager.Instance.addScore();
+
+        // Destroy the pizza gameobject
+        Destroy(pizza);
     }
 
     private void onPizzaIncomplete()
     {
+        // Instantiate popup message gameobject
         string[] messages = _checkOrderMessages.wrongOrderMessages;
-        _incompleteOrderMessage = Instantiate(_incorrectOrderAnimPrefab, this.transform);
-        _incompleteOrderMessage.GetComponentInChildren<TextMeshProUGUI>().text = messages[Random.Range(0, messages.Length)];
+        GameObject go = Instantiate(_incorrectOrderAnimPrefab, this.transform); // As soon as this object is instantiated the animation is displayed.
+        go.GetComponentInChildren<TextMeshProUGUI>().text = messages[Random.Range(0, messages.Length)];// Change the default display text to random messages from the scriptable object
+
+        // Play SFX
         _orderIncorrectSFX.Play();
+
+        // Destroy popup message gameobject after the animation is over
+        float animDuration = go.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length; // Obtain the duration of the animation.
+        Timer.Create(() => Destroy(go), animDuration, null);
+
+        // Assign the popup message gameobject to the class data, in case if the gameobject needs to be disable before the animation is over.
+        _incompleteOrderMessage = go;
+    }
+
+    private void disableIncompleteOrderMessage()
+    {
+        _incompleteOrderMessage.gameObject.SetActive(false);
+        _incompleteOrderMessage = null;
     }
 }

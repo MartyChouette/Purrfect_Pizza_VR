@@ -56,11 +56,13 @@ public class LevelManager : MonoBehaviour
 
     public void onTimeout()
     {
+        _scoreUI.gameObject.SetActive(false);
         _gameOver.Setup(_levelScore.currentScore, false);
     }
 
     private void onGameWon()
     {
+        _scoreUI.gameObject.SetActive(false);
         _gameOver.Setup(_levelScore.currentScore, true);
     }
 

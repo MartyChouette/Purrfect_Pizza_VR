@@ -40,7 +40,7 @@ public class PizzaDetector : MonoBehaviour
             GameObject parent = this.transform.parent.gameObject;
             if (_serviceTable)
             {
-                parent.GetComponent<ServiceSurface>().onPizzaUndetected();
+                parent.GetComponent<ServiceSurface>().onPizzaUndetected(other.gameObject);
             }
 
             if (_prepTable)

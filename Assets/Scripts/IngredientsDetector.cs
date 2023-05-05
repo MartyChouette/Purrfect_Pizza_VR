@@ -5,12 +5,14 @@ using UnityEngine;
 public class IngredientsDetector : MonoBehaviour
 {
     [HideInInspector] public bool onPrepTable;
+    [HideInInspector] public bool onServiceTable;
     [HideInInspector] public Dictionary<string, int> recipe {get;} = new Dictionary<string, int>();
     [HideInInspector] public Dictionary<string, int> addedIngredients {get;} = new Dictionary<string, int>();
     
     private void Start()
     {
         onPrepTable = false;
+        onServiceTable = false;
     }
 
     private void OnTriggerEnter(Collider go)
@@ -30,9 +32,16 @@ public class IngredientsDetector : MonoBehaviour
                 addedIngredients.Add(go.name, 1);
             }
 
+            // Update the recipe UI if the pizza is on the prep table and the added ingredient is in the recipe.
             if (onPrepTable & recipe.ContainsKey(go.name))
             {
-                    PrepSurface.Instance.updateRecipeUI(go.name, pizzaIngredients);
+                PrepSurface.Instance.updateRecipeUI(go.name, pizzaIngredients);
+            }
+
+            // Check when ingredients are added while the pizza is on the service table.
+            if (onServiceTable)
+            {
+                ServiceSurface.Instance.onPizzaUpdated(pizzaIngredients);
             }
         }
     }
@@ -46,6 +55,7 @@ public class IngredientsDetector : MonoBehaviour
             go.GetComponent<Rigidbody>().isKinematic = false;
             addedIngredients[go.name]--;
 
+            // Update the recipe UI if the pizza is on the prep table and the removed ingredient is in the recipe.
             if (onPrepTable & recipe.ContainsKey(go.name))
             {
                 PrepSurface.Instance.updateRecipeUI(go.name, pizzaIngredients);
