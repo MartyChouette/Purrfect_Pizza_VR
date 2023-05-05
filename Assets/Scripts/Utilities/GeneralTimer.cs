@@ -11,7 +11,9 @@ public class GeneralTimer : MonoBehaviour
     public Transform clockTransform;
 
     [Header("Timer Settings")]
-    public float currentTime;
+    private float currentTime;
+    public float maxTime;
+
     private TimeSpan timePlaying;
 
     // [Header("Audio Settings")]
@@ -35,6 +37,7 @@ public class GeneralTimer : MonoBehaviour
 
     private void Start()
     {
+        currentTime = maxTime;
        
     }
 

@@ -29,6 +29,7 @@ public class PizzaDetector : MonoBehaviour
             if(_prepTable)
             {
                 parent.GetComponent<PrepSurface>().onPizzaDetected(other.gameObject);
+                StartCoroutine(FreezeRotation(parent));
             }
         }
     }
@@ -48,5 +49,14 @@ public class PizzaDetector : MonoBehaviour
                 parent.GetComponent<PrepSurface>().onPizzaUndetected(other.gameObject);
             }
         }
+    }
+
+
+    private IEnumerator FreezeRotation(GameObject pizza)
+    {
+        yield return new WaitForSeconds(0.5f);
+        Rigidbody rb = pizza.GetComponent<Rigidbody>();
+        //if (rb != null) rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        if (rb != null) rb.isKinematic = true;
     }
 }
