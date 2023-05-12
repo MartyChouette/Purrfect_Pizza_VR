@@ -14,7 +14,9 @@ namespace MText
         }
         public GameObject activeGraphic;
         public GameObject inactiveGraphic;
-
+        //private GameObject _background;
+        //private Material _buttonOnMataterial;
+        //private Material _buttonOffMataterial;
         /// <summary> 
         /// Sets the activate state according to the parameter passed.
         /// </summary>
@@ -29,6 +31,16 @@ namespace MText
         public void Toggle()
         {
             IsOn = !IsOn;
+            /*
+            if (IsOn)
+            {
+                _background.GetComponent<MeshRenderer>().material = _buttonOnMataterial;
+            }
+            else
+            {
+                _background.GetComponent<MeshRenderer>().material = _buttonOffMataterial;
+            }
+            */
             VisualUpdate();
         }
 

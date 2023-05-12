@@ -48,11 +48,11 @@ public class LevelManager : MonoBehaviour
         _scoreText.text = scoreTextFormat;
 
          // Show the main menu at the start of the game
-        _mainMenu.SetActive(true);
-        _scoreUI.SetActive(false);
-        _sousChefX.SetActive(false);
-        _sousChefY.SetActive(false);
-        _clock.SetActive(false);
+       _mainMenu.SetActive(true);
+       _scoreUI.SetActive(false);
+       _sousChefX.SetActive(false);
+       _sousChefY.SetActive(false);
+       _clock.SetActive(false);
     }
 
     public void StartGame()

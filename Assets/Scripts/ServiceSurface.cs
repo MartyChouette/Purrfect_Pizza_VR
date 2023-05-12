@@ -110,7 +110,7 @@ public class ServiceSurface : MonoBehaviour
         }
         else
         {
-            Timer.Create(() => onPizzaIncomplete(), _checkingTime, null);
+            //Timer.Create(() => onPizzaIncomplete(), _checkingTime, null);
         }
     }
 
