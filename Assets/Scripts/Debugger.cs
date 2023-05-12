@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Debugger : MonoBehaviour
 {
+    [SerializeField] private Pizza[] _pizzas;
     [SerializeField] private GameObject _spawnPoint;
     private Pizza _spawnPizza;
 
@@ -14,14 +15,22 @@ public class Debugger : MonoBehaviour
         delegateButton();
     }
 
+    public Pizza[] pizzas
+    {
+        get
+        {
+            return _pizzas;
+        }
+    }
+
     private void delegateDropdown()
     {
         var dropdown = this.gameObject.GetComponentInChildren<Dropdown>();
         
         // Assign the pizza names to the dropdown options
-        foreach (string pizzaName in OrderManager.Instance.allPizzaTypes.Keys)
+        foreach (Pizza pizza in _pizzas)
         {
-            dropdown.options.Add(new Dropdown.OptionData() {text = pizzaName});
+            dropdown.options.Add(new Dropdown.OptionData() {text = pizza.name});
         }
         dropdown.RefreshShownValue();
         dropdownItemSelected(dropdown); // Assign the default selected item
@@ -31,7 +40,7 @@ public class Debugger : MonoBehaviour
     private void dropdownItemSelected(Dropdown dropdown)
     {
         int index = dropdown.value;
-        _spawnPizza = OrderManager.Instance.allPizzaTypes[dropdown.options[index].text];
+        _spawnPizza = _pizzas[index];
     }
 
     private void delegateButton()
@@ -42,6 +51,6 @@ public class Debugger : MonoBehaviour
 
     private void onButtonClicked()
     {
-        _spawnPizza.instantiatePizza(_spawnPoint.transform);
+        _spawnPizza.instantiatePizza(_spawnPoint.transform, this.transform.root);
     }
 }

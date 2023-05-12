@@ -20,6 +20,7 @@ public class SousChef : MonoBehaviour
     private bool _isCharacteristicUpdatable;
     private int _currentPhase;
     private Timer _timerInstance;
+    private GameObject _objectCollided;
 
     private void OnValidate() 
     {
@@ -54,6 +55,7 @@ public class SousChef : MonoBehaviour
         _isChefAwake = true;
         _isCharacteristicUpdatable = true;
         _currentPhase = 0;
+        _objectCollided = null;
         createPizzaAtStart();
     }
 
@@ -62,11 +64,15 @@ public class SousChef : MonoBehaviour
         onPizzaCreate();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision other)
     {
-        if (other.tag == "Pizza" || other.tag == "Ingredient")
+        if (other.gameObject.CompareTag("Pizza") | other.gameObject.CompareTag("Ingredient"))
         {
-            onGettingHit();
+            if (_objectCollided == null | other.gameObject != _objectCollided)
+            {
+                _objectCollided = other.gameObject;
+                onGettingHit();
+            }
         }
     }
 

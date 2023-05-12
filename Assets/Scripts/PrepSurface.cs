@@ -25,32 +25,31 @@ public class PrepSurface : MonoBehaviour
 
     private void Awake() => Instance = this;
 
-    public void onPizzaDetected(GameObject pizzaIngredients)
+    public void onPizzaDetected(GameObject pizza)
     {
-        pizzaIngredients.GetComponent<IngredientsDetector>().onPrepTable = true;
-        displayOrderRecipe(pizzaIngredients);
+        pizza.GetComponent<IngredientsDetector>().onPrepTable = true;
+        displayOrderRecipe(pizza);
     }
 
-    public void onPizzaUndetected(GameObject pizzaIngredients)
+    public void onPizzaUndetected(GameObject pizza)
     {
-        pizzaIngredients.GetComponent<IngredientsDetector>().onPrepTable = false;
+        pizza.GetComponent<IngredientsDetector>().onPrepTable = false;
         unlistRecipeDisplayed();
     }
 
-    public void updateRecipeUI(string recipeIngreName, GameObject pizzaIngredients)
+    public void updateRecipeUI(string recipeIngreName, GameObject pizza)
     {
-        setIngredientText(recipeIngreName, pizzaIngredients);
+        setIngredientText(recipeIngreName, pizza);
     }
 
-    private void displayOrderRecipe(GameObject pizzaIngredients)
+    private void displayOrderRecipe(GameObject pizza)
     {
-        GameObject pizza = pizzaIngredients.transform.parent.gameObject;
         if (OrderManager.Instance.allPizzaTypes.ContainsKey(pizza.name))
         {
-            foreach (string requiredIngredient in pizzaIngredients.GetComponent<IngredientsDetector>().recipe.Keys)
+            foreach (string requiredIngredient in pizza.GetComponent<IngredientsDetector>().recipe.Keys)
             {
                 _recipeDisplayList.Add(requiredIngredient, Instantiate(_recipeTextPrefab, _recipeUIContent.transform));
-                setIngredientText(requiredIngredient, pizzaIngredients);
+                setIngredientText(requiredIngredient, pizza);
             }
         }
         else
@@ -68,8 +67,8 @@ public class PrepSurface : MonoBehaviour
         _recipeDisplayList.Clear();
     }
 
-    private void setIngredientText(string recipeIngreName, GameObject pizzaIngredients)
+    private void setIngredientText(string recipeIngreName, GameObject pizza)
     {
-        _recipeDisplayList[recipeIngreName].text = pizzaIngredients.GetComponent<IngredientsDetector>().numberOfIngredientsLeftToAdd(recipeIngreName) + " x " + recipeIngreName;
+        _recipeDisplayList[recipeIngreName].text = pizza.GetComponent<IngredientsDetector>().numberOfIngredientsLeftToAdd(recipeIngreName) + " x " + recipeIngreName;
     }
 }

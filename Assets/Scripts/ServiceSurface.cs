@@ -45,47 +45,49 @@ public class ServiceSurface : MonoBehaviour
         _incompleteOrderMessage = null;
     }
 
-    public void onPizzaDetected(GameObject pizzaIngredients)
+    public void onPizzaDetected(GameObject pizza)
     {
-        pizzaIngredients.GetComponent<IngredientsDetector>().onServiceTable = true;
+        pizza.GetComponent<IngredientsDetector>().onServiceTable = true;
         if (_incompleteOrderMessage != null)
         {
             disableIncompleteOrderMessage();
         }
-        checkOrder(pizzaIngredients);
+        checkOrder(pizza);
     }
 
-    public void onPizzaUndetected(GameObject pizzaIngredients)
+    public void onPizzaUndetected(GameObject pizza)
     {
-        pizzaIngredients.GetComponent<IngredientsDetector>().onServiceTable = false;
-        disableIncompleteOrderMessage();
+        pizza.GetComponent<IngredientsDetector>().onServiceTable = false;
+        if (_incompleteOrderMessage != null)
+        {
+            disableIncompleteOrderMessage();
+        }
     }
 
-    public void onPizzaUpdated(GameObject pizzaIngredients)
+    public void onPizzaUpdated(GameObject pizza)
     {
         if (_incompleteOrderMessage != null)
         {
             disableIncompleteOrderMessage();
         }
-        checkOrder(pizzaIngredients);
+        checkOrder(pizza);
     }
 
-    private void checkOrder(GameObject pizzaIngredients)
+    private void checkOrder(GameObject pizza)
     {
         bool isMissingIngredient = false;
-        GameObject pizza = pizzaIngredients.transform.parent.gameObject;
-        Dictionary<string, int> addedIngredients = pizzaIngredients.GetComponent<IngredientsDetector>().addedIngredients;
+        Dictionary<string, int> addedIngredients = pizza.GetComponent<IngredientsDetector>().addedIngredients;
 
         if (OrderManager.Instance.allPizzaTypes.ContainsKey(pizza.name))
         {
             // Go through the ingredients added on the pizza by checking Ingredient object child of the pizza game object
-            foreach (KeyValuePair<string, int> requiredIngredient in pizzaIngredients.GetComponent<IngredientsDetector>().recipe)
+            foreach (KeyValuePair<string, int> requiredIngredient in pizza.GetComponent<IngredientsDetector>().recipe)
             {
                 if (addedIngredients.ContainsKey(requiredIngredient.Key))
                 {
                     if (addedIngredients[requiredIngredient.Key] < requiredIngredient.Value)
                     {
-                        Debug.Log("Short of " + requiredIngredient.Key);
+                        Debug.Log("Missing " + (requiredIngredient.Value - addedIngredients[requiredIngredient.Key]) + " " + requiredIngredient.Key);
                         isMissingIngredient = true;
                     }
                 }

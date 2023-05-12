@@ -16,6 +16,13 @@ public class Character : ScriptableObject
 
     private void OnValidate()
     {
-        numberOfPhases = progressBarColors.Length;
+        if (progressBarColors != null)
+        {
+            numberOfPhases = progressBarColors.Length;
+        }
+        else
+        {
+            numberOfPhases = 0;
+        }
     }
 }

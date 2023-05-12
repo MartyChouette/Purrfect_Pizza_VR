@@ -6,6 +6,7 @@ public class PizzaDetector : MonoBehaviour
 {
     [SerializeField] private bool _prepTable;
     [SerializeField] private bool _serviceTable;
+    //private bool _pizzaDetected;
 
     private void OnValidate()
     {
@@ -16,37 +17,49 @@ public class PizzaDetector : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        //_pizzaDetected = false;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Pizza")
+        //Debug.Log(other.name);
+        if (other.CompareTag("Pizza")) //& !_pizzaDetected)
         {
-            GameObject parent = this.transform.parent.gameObject;
+            //_pizzaDetected = true;
+            GameObject surface = this.transform.parent.gameObject;
+            //GameObject pizza = other.transform.parent.parent.gameObject;
+
             if (_serviceTable)
             {
-                parent.GetComponent<ServiceSurface>().onPizzaDetected(other.gameObject);
+                surface.GetComponent<ServiceSurface>().onPizzaDetected(other.gameObject);
             }
             
             if(_prepTable)
             {
-                parent.GetComponent<PrepSurface>().onPizzaDetected(other.gameObject);
-                StartCoroutine(FreezeRotation(parent));
+                surface.GetComponent<PrepSurface>().onPizzaDetected(other.gameObject);
+                //StartCoroutine(FreezeRotation(pizza));
             }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag == "Pizza")
+        if (other.CompareTag("Pizza")) //& _pizzaDetected)
         {
-            GameObject parent = this.transform.parent.gameObject;
+            //_pizzaDetected = false;
+            GameObject surface = this.transform.parent.gameObject;
+            //GameObject pizza = other.transform.parent.parent.gameObject;
+
             if (_serviceTable)
             {
-                parent.GetComponent<ServiceSurface>().onPizzaUndetected(other.gameObject);
+                surface.GetComponent<ServiceSurface>().onPizzaUndetected(other.gameObject);
             }
 
             if (_prepTable)
             {
-                parent.GetComponent<PrepSurface>().onPizzaUndetected(other.gameObject);
+                surface.GetComponent<PrepSurface>().onPizzaUndetected(other.gameObject);
             }
         }
     }

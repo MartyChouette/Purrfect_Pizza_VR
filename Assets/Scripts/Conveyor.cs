@@ -10,7 +10,7 @@ public class Conveyor : MonoBehaviour
     private Vector3 direction;
     [SerializeField]
     private List<GameObject> onBelt;
-
+    
     private Material material;
 
     // Start is called before the first frame update

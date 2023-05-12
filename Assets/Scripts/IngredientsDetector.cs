@@ -4,62 +4,111 @@ using UnityEngine;
 
 public class IngredientsDetector : MonoBehaviour
 {
+    public GameObject detector;
+    public GameObject container;
     [HideInInspector] public bool onPrepTable;
     [HideInInspector] public bool onServiceTable;
     [HideInInspector] public Dictionary<string, int> recipe {get;} = new Dictionary<string, int>();
     [HideInInspector] public Dictionary<string, int> addedIngredients {get;} = new Dictionary<string, int>();
+    [HideInInspector] public Transform currentWaypoint;
+    [HideInInspector] public Transform previousWaypoint;
+    public const float cylinderColliderRadius = 0.45f;
+    private Dictionary<int, FixedJoint> _fixedJoints {get;} = new Dictionary<int, FixedJoint>();
     
     private void Start()
     {
+        if (container == null)
+        {
+            Debug.Log("Ingredient Detector is missing a container gameobject.", this.gameObject);
+        }
         onPrepTable = false;
         onServiceTable = false;
+        currentWaypoint = null;
+        previousWaypoint = null;
     }
 
-    private void OnTriggerEnter(Collider go)
+    private void OnTriggerEnter(Collider other)
     {
-        GameObject pizzaIngredients = this.gameObject;
-        if (pizzaIngredients.tag == "Pizza" & go.tag == "Ingredient")
+        if (other.CompareTag("Ingredient"))
         {
-            go.transform.SetParent(pizzaIngredients.transform);
-            go.GetComponent<Rigidbody>().isKinematic = true;
-
-            if (addedIngredients.ContainsKey(go.name))
-            {
-                addedIngredients[go.name]++;
-            }
-            else
-            {
-                addedIngredients.Add(go.name, 1);
-            }
+            //
+            //Debug.Log(other.name + " added");
+            //
+            OnIngredientAdded(other.gameObject);
 
             // Update the recipe UI if the pizza is on the prep table and the added ingredient is in the recipe.
-            if (onPrepTable & recipe.ContainsKey(go.name))
+            if (onPrepTable & recipe.ContainsKey(other.name))
             {
-                PrepSurface.Instance.updateRecipeUI(go.name, pizzaIngredients);
+                PrepSurface.Instance.updateRecipeUI(other.name, this.gameObject);
             }
 
             // Check when ingredients are added while the pizza is on the service table.
             if (onServiceTable)
             {
-                ServiceSurface.Instance.onPizzaUpdated(pizzaIngredients);
+                //ServiceSurface.Instance.onPizzaUpdated(pizzaIngredients);
             }
         }
     }
 
-    private void OnTriggerExit(Collider go)
+    private void OnTriggerExit(Collider other)
     {
-        GameObject pizzaIngredients = this.gameObject;
-        if (pizzaIngredients.tag == "Pizza" & go.tag == "Ingredient")
+        if (other.CompareTag("Added Ingredient"))
         {
-            go.transform.SetParent(pizzaIngredients.transform.root);
-            go.GetComponent<Rigidbody>().isKinematic = false;
-            addedIngredients[go.name]--;
+            OnIngredientRemoved(other.gameObject);
 
             // Update the recipe UI if the pizza is on the prep table and the removed ingredient is in the recipe.
-            if (onPrepTable & recipe.ContainsKey(go.name))
+            if (onPrepTable & recipe.ContainsKey(other.name))
             {
-                PrepSurface.Instance.updateRecipeUI(go.name, pizzaIngredients);
+                PrepSurface.Instance.updateRecipeUI(other.name, this.gameObject);
             }
+        }
+    }
+
+    public void OnIngredientAdded(GameObject ingredient)
+    {
+        // Fixed Joint components to keep the ingredients sticking to the pizza
+        _fixedJoints.Add(ingredient.GetInstanceID(), this.gameObject.AddComponent<FixedJoint>() as FixedJoint);
+        _fixedJoints[ingredient.GetInstanceID()].connectedBody = ingredient.GetComponent<Rigidbody>();
+        //_fixedJoints[ingredient.GetInstanceID()].breakForce = 100f;
+        //_fixedJoints[ingredient.GetInstanceID()].breakTorque = 100f;
+        
+        ingredient.transform.SetParent(container.transform);
+        ingredient.tag = "Added Ingredient";
+        ingredient.GetComponent<Rigidbody>().mass = 0f;
+        ingredient.GetComponent<Rigidbody>().useGravity = false;
+        //ingredient.GetComponent<Rigidbody>().angularDrag = 0f;
+        //ingredient.GetComponent<Rigidbody>().isKinematic = true;
+
+        if (addedIngredients.ContainsKey(ingredient.name))
+        {
+            addedIngredients[ingredient.name]++;
+        }
+        else
+        {
+            addedIngredients.Add(ingredient.name, 1);
+        }
+    }
+
+    private void OnIngredientRemoved(GameObject ingredient)
+    {
+        //
+        //Debug.Log("Removed " + ingredient.name + "; " + _fixedJoints.Count);
+        //
+        // Destroy the Fixed Joint components
+        Destroy(_fixedJoints[ingredient.GetInstanceID()]);
+        _fixedJoints.Remove(ingredient.GetInstanceID());
+        //
+        ingredient.transform.SetParent(this.gameObject.transform.root.parent); // Set the ingredient gameobject's parent to the root scene
+        ingredient.tag = "Ingredient";
+        ingredient.GetComponent<Rigidbody>().mass = 1f;
+        ingredient.GetComponent<Rigidbody>().useGravity = true;
+        //ingredient.GetComponent<Rigidbody>().angularDrag = 0.05f;
+        //ingredient.GetComponent<Rigidbody>().isKinematic = false;
+
+        addedIngredients[ingredient.name]--;
+        if (addedIngredients[ingredient.name] <= 0)
+        {
+            addedIngredients.Remove(ingredient.name);
         }
     }
 

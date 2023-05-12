@@ -7,6 +7,7 @@ public class OrderManager : MonoBehaviour
 {
     public static OrderManager Instance;
     [SerializeField] private Orders _orders;
+    [SerializeField] private GameObject[] debuggers;
     public Dictionary<string, Pizza> allPizzaTypes {get;} = new Dictionary<string, Pizza>();
     public Dictionary<string, GameObject> allIngredients {get;} = new Dictionary<string, GameObject>();
 
@@ -36,6 +37,7 @@ public class OrderManager : MonoBehaviour
 
     private void collectAllPizzaTypesAndIngredients()
     {
+        // Collect all pizza types from Chef X and Chef Y, and debuggers
         foreach (Pizza item in pizzaTypes(Character.Characters.SousChefX))
         {
             if (!allPizzaTypes.ContainsKey(item.name))
@@ -50,7 +52,9 @@ public class OrderManager : MonoBehaviour
                 allPizzaTypes.Add(item.name, item);
             }
         }
+        collectDebuggerPizzaTypes();
 
+        // Collect all Ingredients
         foreach (Pizza type in allPizzaTypes.Values)
         {
             foreach (var ingredient in type.recipe)
@@ -58,6 +62,23 @@ public class OrderManager : MonoBehaviour
                 if (!allIngredients.ContainsKey(ingredient.ingredientPrefab.name))
                 {
                     allIngredients.Add(ingredient.ingredientPrefab.name, ingredient.ingredientPrefab);
+                }
+            }
+        }
+    }
+
+    private void collectDebuggerPizzaTypes()
+    {
+        foreach (GameObject deb in debuggers)
+        {
+            if (deb.activeSelf)
+            {
+                foreach (Pizza item in deb.GetComponent<Debugger>().pizzas)
+                {
+                    if (!allPizzaTypes.ContainsKey(item.name))
+                    {
+                        allPizzaTypes.Add(item.name, item);
+                    }
                 }
             }
         }
