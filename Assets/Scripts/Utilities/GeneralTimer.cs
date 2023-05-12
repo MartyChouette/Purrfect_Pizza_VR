@@ -16,9 +16,9 @@ public class GeneralTimer : MonoBehaviour
 
     private TimeSpan timePlaying;
 
-    // [Header("Audio Settings")]
-    // private AudioClip loseSound;
-    // private AudioSource audioSource;
+    [Header("Audio Settings")]
+    private AudioClip loseSound;
+    private AudioSource audioSource;
 
     [Header("Limit Settings")]
     public bool hasLimit;
@@ -30,8 +30,8 @@ public class GeneralTimer : MonoBehaviour
 
     private void Awake()
     {
-        // loseSound = (AudioClip)Resources.Load("lose");
-        // audioSource = GetComponent<AudioSource>();
+        loseSound = (AudioClip)Resources.Load("lose");
+        audioSource = GetComponent<AudioSource>();
         initialPosition = clockTransform.position;
     }
 
@@ -52,13 +52,13 @@ public class GeneralTimer : MonoBehaviour
             timerText.color = Color.red;
             enabled = false;
             LevelManager.Instance.onTimeout();
-            // StartCoroutine(PlaySound());
+            // StartCoroutine(ShakeClock());
+        }
+        else if (currentTime == 3f) 
+        {
+            StartCoroutine(PlaySound());
         }
 
-        // else if (currentTime <= 5f) // Adjust the threshold for when to start the shake animation
-        // {
-        //     StartCoroutine(ShakeClock());
-        // }
 
 
         setTimerText();
@@ -91,13 +91,13 @@ public class GeneralTimer : MonoBehaviour
 //     }
 
 
-    // IEnumerator PlaySound()
-    // {
-    //     audioSource.clip = loseSound;
-    //     audioSource.Play();
-    //     yield return new WaitForSeconds(2);
-    //     SceneManager.LoadScene("TimeUp");
-    // }
+    IEnumerator PlaySound()
+    {
+        audioSource.clip = loseSound;
+        audioSource.Play();
+        yield return null;
+        // SceneManager.LoadScene("TimeUp");
+    }
 
 
 }
