@@ -14,6 +14,12 @@ public class LevelManager : MonoBehaviour
     private GameOver _gameOver;
     private TextMeshProUGUI _scoreText;
 
+    [SerializeField] private GameObject _mainMenu;
+    [SerializeField] private GameObject _sousChefX;
+    [SerializeField] private GameObject _sousChefY;
+    [SerializeField] private GameObject _clock;
+
+
     private void OnEnable()
     {
         if (_levelScore == null)
@@ -28,6 +34,10 @@ public class LevelManager : MonoBehaviour
         {
             Debug.Log("The Level Manager is missing End Screen gameobject.", this.gameObject);
         }
+        if (_mainMenu == null)
+        {
+            Debug.Log("The Level Manager is missing Main Menu gameobject.", this.gameObject);
+        }
     }
 
     private void Awake()
@@ -36,7 +46,25 @@ public class LevelManager : MonoBehaviour
         _gameOver = _endScreen.GetComponentInChildren<GameOver>();
         _scoreText = _scoreUI.GetComponentInChildren<TextMeshProUGUI>();
         _scoreText.text = scoreTextFormat;
+
+         // Show the main menu at the start of the game
+       _mainMenu.SetActive(true);
+       _scoreUI.SetActive(false);
+       _sousChefX.SetActive(false);
+       _sousChefY.SetActive(false);
+       _clock.SetActive(false);
     }
+
+    public void StartGame()
+    {
+        // Start the game
+        _mainMenu.SetActive(false);
+        _scoreUI.SetActive(true);
+        _sousChefX.SetActive(true);
+        _sousChefY.SetActive(true);
+        _clock.SetActive(true);
+    }
+    
     /*
     private void Update()
     {

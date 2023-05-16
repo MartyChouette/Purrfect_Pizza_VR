@@ -8,6 +8,7 @@ public class IngredientsDetector : MonoBehaviour
     public GameObject container;
     [HideInInspector] public bool onPrepTable;
     [HideInInspector] public bool onServiceTable;
+    //[HideInInspector] public bool onConveyorBelt;
     [HideInInspector] public Dictionary<string, int> recipe {get;} = new Dictionary<string, int>();
     [HideInInspector] public Dictionary<string, int> addedIngredients {get;} = new Dictionary<string, int>();
     [HideInInspector] public Transform currentWaypoint;
@@ -25,6 +26,7 @@ public class IngredientsDetector : MonoBehaviour
         onServiceTable = false;
         currentWaypoint = null;
         previousWaypoint = null;
+        //onConveyorBelt = false;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -60,6 +62,28 @@ public class IngredientsDetector : MonoBehaviour
             if (onPrepTable & recipe.ContainsKey(other.name))
             {
                 PrepSurface.Instance.updateRecipeUI(other.name, this.gameObject);
+            }
+        }
+    }
+
+    /*
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Conveyor Belt"))
+        {
+            onConveyorBelt = true;
+        }
+    }*/
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Conveyor Belt"))
+        {
+            //onConveyorBelt = false;
+            if (this.gameObject.GetComponent<ConstantForce>() != null)
+            {
+                this.gameObject.GetComponent<ConstantForce>().relativeForce = Vector3.zero;
+                Destroy(this.gameObject.GetComponent<ConstantForce>());
             }
         }
     }
