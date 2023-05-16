@@ -87,13 +87,13 @@ public class ServiceSurface : MonoBehaviour
                 {
                     if (addedIngredients[requiredIngredient.Key] < requiredIngredient.Value)
                     {
-                        Debug.Log("Missing " + (requiredIngredient.Value - addedIngredients[requiredIngredient.Key]) + " " + requiredIngredient.Key);
+                        //Debug.Log("Missing " + (requiredIngredient.Value - addedIngredients[requiredIngredient.Key]) + " " + requiredIngredient.Key);
                         isMissingIngredient = true;
                     }
                 }
                 else
                 {
-                    Debug.Log("Missing " + requiredIngredient.Key);
+                    //Debug.Log("Missing " + requiredIngredient.Key);
                     isMissingIngredient = true;
                 }
             }
