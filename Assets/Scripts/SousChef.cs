@@ -10,6 +10,15 @@ public class SousChef : MonoBehaviour
     [SerializeField] private GameObject _progressBar;
     [SerializeField] private AudioSource[] _meowSounds;
     [SerializeField] private AudioSource _angryMeowSound;
+    [SerializeField] private AudioSource _sleepingSound;
+    [SerializeField] private GameObject _sleepingTextPrefab;
+    [SerializeField] private Transform _textParent;
+    [SerializeField] private float _floatingSpeed = 1f;
+    [SerializeField] private float _floatingHeight = 1f;
+    [SerializeField] private float _floatingDuration = 4f;
+    private GameObject _sleepingTextObject;
+    private Coroutine _floatingCoroutine;
+
     private Slider _progressBarSlider;
     private Image _progressBarFill;
     private Character.Characters _character;
@@ -44,6 +53,7 @@ public class SousChef : MonoBehaviour
         _progressBarSlider.gameObject.SetActive(false);
 
         _progressBarFill = _progressBar.transform.Find("Slider/Fill Area/Fill").gameObject.GetComponent<Image>();
+        _textParent = transform.Find("TextParent");
     }
 
     private void Start()
@@ -132,15 +142,30 @@ public class SousChef : MonoBehaviour
         else // The Chef is sleeping
         {
             _isChefAwake = false;
+            _sleepingSound.Play();
+            _sleepingTextObject = Instantiate(_sleepingTextPrefab, _textParent);
+            _sleepingTextObject.transform.localPosition = Vector3.zero;
+
+            _floatingCoroutine = StartCoroutine(FloatingTextRoutine());
         }
     }
 
     private void onGettingHit()
     {
+        _sleepingSound.Stop();
         _angryMeowSound.Play();
         _currentPhase = 0;
         if (_character == 0) // Chef X
         {
+            if (_sleepingTextObject != null)
+            {
+                if (_floatingCoroutine != null)
+                {
+                    StopCoroutine(_floatingCoroutine);
+                }
+                Destroy(_sleepingTextObject);
+            }
+            
             _progressBarFill.color = _characterSO.progressBarColors[_currentPhase];
             _completionTime = _characterSO.completionTime;
             if (_timerInstance != null)
@@ -154,5 +179,29 @@ public class SousChef : MonoBehaviour
         }
         _isChefAwake = true;
         _isCharacteristicUpdatable = false;
+    }
+
+        private IEnumerator FloatingTextRoutine()
+    {
+        while (true)
+        {
+            float elapsedTime = 0f;
+            Vector3 initialPosition = _sleepingTextObject.transform.localPosition;
+
+            while (elapsedTime < _floatingDuration)
+            {
+                float normalizedTime = elapsedTime / _floatingDuration;
+                float yOffset = Mathf.Sin(normalizedTime * Mathf.PI) * _floatingHeight;
+                Vector3 targetPosition = initialPosition + new Vector3(0f, yOffset, 0f);
+
+                _sleepingTextObject.transform.localPosition = targetPosition;
+
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            // Wait for a short delay before starting the next loop
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 }

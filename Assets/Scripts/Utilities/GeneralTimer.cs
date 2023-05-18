@@ -51,13 +51,14 @@ public class GeneralTimer : MonoBehaviour
             setTimerText();
             timerText.color = Color.red;
             enabled = false;
+            audioSource.Play();
             LevelManager.Instance.onTimeout();
             // StartCoroutine(ShakeClock());
         }
-        else if (currentTime == 3f) 
-        {
-            StartCoroutine(PlaySound());
-        }
+        // else if (currentTime == 3f) 
+        // {
+        //     StartCoroutine(PlaySound());
+        // }
 
 
 
@@ -91,13 +92,13 @@ public class GeneralTimer : MonoBehaviour
 //     }
 
 
-    IEnumerator PlaySound()
-    {
-        audioSource.clip = loseSound;
-        audioSource.Play();
-        yield return null;
-        // SceneManager.LoadScene("TimeUp");
-    }
+    // IEnumerator PlaySound()
+    // {
+    //     audioSource.clip = loseSound;
+    //     audioSource.Play();
+    //     yield return null;
+    //     // SceneManager.LoadScene("TimeUp");
+    // }
 
 
 }

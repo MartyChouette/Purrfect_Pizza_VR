@@ -47,7 +47,7 @@ public class LevelManager : MonoBehaviour
         _scoreText = _scoreUI.GetComponentInChildren<TextMeshProUGUI>();
         _scoreText.text = scoreTextFormat;
 
-         // Show the main menu at the start of the game
+        // Show the main menu at the start of the game
        _mainMenu.SetActive(true);
        _scoreUI.SetActive(false);
        _sousChefX.SetActive(false);
