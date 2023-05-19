@@ -18,7 +18,6 @@ public class SousChef : MonoBehaviour
     [SerializeField] private float _floatingDuration = 4f;
     private GameObject _sleepingTextObject;
     private Coroutine _floatingCoroutine;
-
     private Slider _progressBarSlider;
     private Image _progressBarFill;
     private Character.Characters _character;
