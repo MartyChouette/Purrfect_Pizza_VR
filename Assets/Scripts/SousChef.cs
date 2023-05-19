@@ -16,9 +16,12 @@ public class SousChef : MonoBehaviour
     [SerializeField] private float _floatingSpeed = 1f;
     [SerializeField] private float _floatingHeight = 1f;
     [SerializeField] private float _floatingDuration = 4f;
+
+    // public Animator animator;
+    // private bool _isAnimating;
+
     private GameObject _sleepingTextObject;
     private Coroutine _floatingCoroutine;
-
     private Slider _progressBarSlider;
     private Image _progressBarFill;
     private Character.Characters _character;
@@ -63,6 +66,7 @@ public class SousChef : MonoBehaviour
         _orderIndex = 0;
         _isMakingPizza = false;
         _isChefAwake = true;
+        // _isAnimating = true; 
         _isCharacteristicUpdatable = true;
         _currentPhase = 0;
         _objectCollided = null;
@@ -93,6 +97,15 @@ public class SousChef : MonoBehaviour
             _isMakingPizza = true;
             _timerInstance = Timer.Create(onPizzaComplete, _completionTime, _progressBarSlider);
         }
+        // if (_isChefAwake && _isAnimating) 
+        // {
+        //     animator.SetBool("isCooking", true);
+        // } else if (!_isChefAwake) 
+        // {
+        //     _isAnimating = false; 
+        //     animator.SetBool("isCooking", false);
+        // }
+
     }
 
     private void createPizzaAtStart()
