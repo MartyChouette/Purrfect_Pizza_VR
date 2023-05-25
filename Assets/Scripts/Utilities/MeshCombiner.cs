@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeshCombiner : MonoBehaviour
+public class MeshCombiner
 {
     //[SerializeField] private List<MeshFilter> _sourceMeshFilters;
     //[SerializeField] private MeshFilter _targetMeshFilter;

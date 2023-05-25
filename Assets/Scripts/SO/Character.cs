@@ -10,19 +10,6 @@ public class Character : ScriptableObject
     }
     public Characters character;
     public float completionTime;
-    public Color[] progressBarColors;
-    public float characteristicScaler;
-    [HideInInspector] public int numberOfPhases;
-
-    private void OnValidate()
-    {
-        if (progressBarColors != null)
-        {
-            numberOfPhases = progressBarColors.Length;
-        }
-        else
-        {
-            numberOfPhases = 0;
-        }
-    }
+    [Tooltip("Delta value that determine how fast until the progress bar becomes inactive (turns to color grey)")]
+    [Range(0f, 1f)] public float characteristicDeltaValue;
 }

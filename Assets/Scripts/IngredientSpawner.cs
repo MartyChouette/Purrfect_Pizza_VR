@@ -36,14 +36,14 @@ public class IngredientSpawner : MonoBehaviour
         {
             Button button = Instantiate(_buttonPrefab, _UIContent.transform);
             button.GetComponentInChildren<Text>().text = ingredient.name;
-            button.onClick.AddListener(() => instantiateIngredient(ingredient));
+            button.onClick.AddListener(() => Ingredient.instantiate(ingredient, _spawnPoint.transform));
         }
     }
 
-    private void instantiateIngredient(GameObject ingredient)
-    {
-        GameObject go = Instantiate(ingredient, _spawnPoint.transform);
-        go.name = ingredient.name;
-        go.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f); // Change ingredient size
-    }
+    // private void instantiateIngredient(GameObject ingredient)
+    // {
+    //     GameObject go = Instantiate(ingredient, _spawnPoint.transform);
+    //     go.name = ingredient.name;
+    //     go.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f); // Change ingredient size
+    // }
 }

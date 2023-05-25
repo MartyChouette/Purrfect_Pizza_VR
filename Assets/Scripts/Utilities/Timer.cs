@@ -7,7 +7,7 @@ using TMPro;
 
 public class Timer
 {
-    public static Timer Create(Action action, float time, Slider progressBar)
+    public static Timer Create(Action action, float time, ProgressBar progressBar=null)
     {
         GameObject gameObject = new GameObject("Timer", typeof(MonoBehaviourHook));
         Timer timer = new Timer(action, time, progressBar, gameObject);
@@ -18,7 +18,7 @@ public class Timer
     public class MonoBehaviourHook : MonoBehaviour
     {
         public Action onUpdate;
-        private void Update()
+        private void FixedUpdate()
         {
             onUpdate?.Invoke();
         }
@@ -26,33 +26,44 @@ public class Timer
 
     private Action _action;
     private float _timeLimit;
-    private float _time;
+    private float _currentTime;
     private bool _isDestroyed;
-    private Slider _progressBar;
+    private ProgressBar _progressBar;
     private GameObject _gameObject;
 
-    private Timer(Action action, float time, Slider progressBar, GameObject gameObject)
+    private Timer(Action action, float time, ProgressBar progressBar, GameObject gameObject)
     {
         _action = action;
         _timeLimit = time;
-        _time = 0;
+        _currentTime = 0;
         _progressBar = progressBar;
         _gameObject = gameObject;
         _isDestroyed = false;
-        enableProgressBar();
     }
 
     public void Update()
     {
         if (!_isDestroyed)
         {
-            _time += Time.deltaTime;
-            if (_progressBar != null)
+            if (_progressBar != null) // Calculate time with progress bar
             {
-                _progressBar.value = _time / _timeLimit;
+                if (_progressBar.isActive)
+                {
+                    _currentTime += Time.deltaTime; // Update current time
+                    _progressBar.sliderValue = _currentTime / _timeLimit; // Update progress bar value
+
+                    if (_progressBar.lerpColorTDelta > 0) 
+                    {
+                        _progressBar.setFillColor(); // Update the progress bar color
+                    }
+                }
+            }
+            else // Calculate time without progress bar
+            {
+                _currentTime += Time.deltaTime; // Update current time
             }
 
-            if (_time > _timeLimit)
+            if (_currentTime >= _timeLimit)
             {
                 _action();
                 DestroySelf();
@@ -60,36 +71,15 @@ public class Timer
         }
     }
 
-    public float timeLimit
-    {
-        set
-        {
-            _timeLimit = value;
-        }
-    }
-
-    private void enableProgressBar()
-    {
-        if (_progressBar != null)
-        {
-            _progressBar.gameObject.SetActive(true);
-        }
-    }
-
-    private void disableProgressBar()
-    {
-        if (_progressBar != null)
-        {
-            _progressBar.gameObject.SetActive(false);
-            _progressBar.value = 0;
-        }
-    }
-
     private void DestroySelf()
     {
         _isDestroyed = true;
         UnityEngine.Object.Destroy(_gameObject);
-        disableProgressBar();
+        
+        if (_progressBar != null)
+        {
+            _progressBar.sliderValue = 0;
+        }
     }
 
     /*

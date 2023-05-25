@@ -7,13 +7,14 @@ using System;
 public class Pizza : ScriptableObject
 {
     [Serializable]
-    public class Ingredient
+    public class IngredientInfo
     {
+        [HideInInspector] public string ingredientName = "Ingredient";
         public int amount;
         public GameObject ingredientPrefab;
     }
     public GameObject doughPrefab;
-    public Ingredient[] recipe;
+    public IngredientInfo[] recipe;
     [Tooltip("Include one of each ingredient from the recipe.")]
     public bool includeSomeIngredients;
     private Mesh _combinedMesh;
@@ -32,6 +33,7 @@ public class Pizza : ScriptableObject
                 Debug.Log(this.name + " scriptable object is missing an ingredient prefab.", this);
             }
         }
+
     }
 
     private void OnEnable()
@@ -39,7 +41,7 @@ public class Pizza : ScriptableObject
         createCombinedMesh();
     }
 
-    public void instantiatePizza(Transform spawnTransform, Transform parentTransform = null)
+    public GameObject instantiate(Transform spawnTransform, Transform parentTransform = null)
     {
         GameObject pizzaGO = Instantiate(doughPrefab, spawnTransform);
         if (parentTransform != null)
@@ -53,38 +55,47 @@ public class Pizza : ScriptableObject
         addMeshComponents(pizzaGO);
 
         IngredientsDetector ingredientsDetectorSC = pizzaGO.GetComponent<IngredientsDetector>();
-        foreach (Ingredient ingredient in recipe)
+        foreach (IngredientInfo ingredient in recipe)
         {
             ingredientsDetectorSC.recipe.Add(ingredient.ingredientPrefab.name, ingredient.amount);
 
             if (includeSomeIngredients)
             {
-                instantiateIngredient(ingredient.ingredientPrefab, ingredientsDetectorSC);
+                //instantiateIngredient(ingredient.ingredientPrefab, ingredientsDetectorSC);
+                Ingredient.instantiateOnPizza(ingredient.ingredientPrefab, ingredientsDetectorSC);
             }
         } 
+
+        return pizzaGO;
     }
 
-    private void instantiateIngredient(GameObject ingredient, IngredientsDetector ingredientsDetectorSC)
-    {
-        ingredientsDetectorSC.detector.SetActive(false);
-        GameObject go = Instantiate(ingredient, ingredientsDetectorSC.container.transform);
-        go.name = ingredient.name;
-        go.transform.position += randomIngredientPosition;
-        go.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f); // Change ingredient size
-        ingredientsDetectorSC.OnIngredientAdded(go);
-        ingredientsDetectorSC.detector.SetActive(true);
-    }
+    // private void instantiateIngredient(GameObject ingredient, IngredientsDetector ingredientsDetectorSC)
+    // {
+    //     ingredientsDetectorSC.detector.SetActive(false);
+    //     // Instantiate the ingredient on the pizza
+    //     GameObject go = Ingredient.instantiate(ingredient, ingredientsDetectorSC.container.transform);
 
-    private Vector3 randomIngredientPosition
-    {
-        get
-        {
-            float x = UnityEngine.Random.Range(-1*IngredientsDetector.cylinderColliderRadius, IngredientsDetector.cylinderColliderRadius);
-            float maxZ = Mathf.Sqrt(IngredientsDetector.cylinderColliderRadius*IngredientsDetector.cylinderColliderRadius - x*x);
-            float z = UnityEngine.Random.Range(-1*maxZ, maxZ);
-            return new Vector3(x, 0, z);
-        }
-    }
+    //     // GameObject go = Instantiate(ingredient, ingredientsDetectorSC.container.transform);
+    //     // go.name = ingredient.name;
+    //     // go.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f); // Change ingredient size
+
+    //     // Set random position for the ingredient on the pizza surface inside the crust (GameObject: detector area)
+    //     go.transform.position += randomIngredientPosition;
+        
+    //     ingredientsDetectorSC.OnIngredientAdded(go);
+    //     ingredientsDetectorSC.detector.SetActive(true);
+    // }
+
+    // private Vector3 randomIngredientPosition
+    // {
+    //     get
+    //     {
+    //         float x = UnityEngine.Random.Range(-1*IngredientsDetector.cylinderColliderRadius, IngredientsDetector.cylinderColliderRadius);
+    //         float maxZ = Mathf.Sqrt(IngredientsDetector.cylinderColliderRadius*IngredientsDetector.cylinderColliderRadius - x*x);
+    //         float z = UnityEngine.Random.Range(-1*maxZ, maxZ);
+    //         return new Vector3(x, 0, z);
+    //     }
+    // }
 
     private void createCombinedMesh()
     {

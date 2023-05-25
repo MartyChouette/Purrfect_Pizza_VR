@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class SousChef : MonoBehaviour
 {
     [SerializeField] private Character _characterSO;
     [SerializeField] private GameObject _pizzaSpawnPoint;
-    [SerializeField] private GameObject _progressBar;
     [SerializeField] private AudioSource[] _meowSounds;
     [SerializeField] private AudioSource _angryMeowSound;
     [SerializeField] private AudioSource _sleepingSound;
@@ -18,41 +18,31 @@ public class SousChef : MonoBehaviour
     [SerializeField] private float _floatingDuration = 4f;
     private GameObject _sleepingTextObject;
     private Coroutine _floatingCoroutine;
-
-    private Slider _progressBarSlider;
-    private Image _progressBarFill;
+    private ProgressBar _progressBar;
     private Character.Characters _character;
     private float _completionTime;
     private int _orderIndex;
     private bool _isMakingPizza;
     private bool _isChefAwake;
-    private bool _isCharacteristicUpdatable;
-    private int _currentPhase;
-    private Timer _timerInstance;
-    private GameObject _objectCollided;
 
-    private void OnValidate() 
-    {
-        if (_characterSO == null)
-        {
-            Debug.Log("Sous Chef is missing a Character scriptable object.", this.gameObject);
-        }
-        if (_pizzaSpawnPoint == null)
-        {
-            Debug.Log("Sous Chef is missing a pizza spawn point prefab.", this.gameObject);
-        }
-        if (_progressBar == null)
-        {
-            Debug.Log("Sous Chef is missing a progress bar prefab.", this.gameObject);
-        }
-    }
+    private const float _collisionThreshold = 5f;
+
+    // Check to endure the variables in the inspector are assigned
+    // private void OnValidate() 
+    // {
+    //     if (_characterSO == null)
+    //     {
+    //         Debug.Log("Sous Chef is missing a Character scriptable object.", this.gameObject);
+    //     }
+    //     if (_pizzaSpawnPoint == null)
+    //     {
+    //         Debug.Log("Sous Chef is missing a pizza spawn point prefab.", this.gameObject);
+    //     }
+    // }
 
     private void Awake()
     {
-        _progressBarSlider = _progressBar.GetComponentInChildren<Slider>();
-        _progressBarSlider.gameObject.SetActive(false);
-
-        _progressBarFill = _progressBar.transform.Find("Slider/Fill Area/Fill").gameObject.GetComponent<Image>();
+        _progressBar = GetComponentInChildren<ProgressBar>();
         _textParent = transform.Find("TextParent");
     }
 
@@ -60,54 +50,50 @@ public class SousChef : MonoBehaviour
     {
         _character = _characterSO.character;
         _completionTime = _characterSO.completionTime;
+        _progressBar.lerpColorTDelta = _characterSO.characteristicDeltaValue;
         _orderIndex = 0;
         _isMakingPizza = false;
         _isChefAwake = true;
-        _isCharacteristicUpdatable = true;
-        _currentPhase = 0;
-        _objectCollided = null;
         createPizzaAtStart();
     }
 
     private void Update()
     {
-        onPizzaCreate();
+        onCreatingPizza();
+        updateChefCharateristic();
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Pizza") | other.gameObject.CompareTag("Ingredient"))
+        if (other.relativeVelocity.magnitude > _collisionThreshold)
         {
-            if (_objectCollided == null | other.gameObject != _objectCollided)
-            {
-                _objectCollided = other.gameObject;
-                onGettingHit();
-            }
+            onGettingHit();
         }
     }
 
-    private void onPizzaCreate()
+    private void onCreatingPizza()
     {
+        // When pizza is completed
         if (!_isMakingPizza & _isChefAwake)
         {
             _isMakingPizza = true;
-            _timerInstance = Timer.Create(onPizzaComplete, _completionTime, _progressBarSlider);
+            Timer.Create(onPizzaComplete, _completionTime, _progressBar);
         }
     }
 
     private void createPizzaAtStart()
     {
-        OrderManager.Instance.orderList(_character)[_orderIndex].instantiatePizza(_pizzaSpawnPoint.transform);
+        OrderManager.Instance.orderList(_character)[_orderIndex].instantiate(_pizzaSpawnPoint.transform);
         _orderIndex++;
     }
 
     private void onPizzaComplete()
     {
-        OrderManager.Instance.orderList(_character)[_orderIndex].instantiatePizza(_pizzaSpawnPoint.transform); // Spawn the pizza gameobject
-        _meowSounds[Random.Range(0, _meowSounds.Length)].Play(); // Play SFX
-        updateChefCharateristic(); // Update the unique characteristic of each Chef
+        OrderManager.Instance.orderList(_character)[_orderIndex].instantiate(_pizzaSpawnPoint.transform); // Spawn the pizza gameobject
+        _meowSounds[UnityEngine.Random.Range(0, _meowSounds.Length)].Play(); // Play SFX
         _isMakingPizza = false; 
         _orderIndex++;
+        
         // Cycle through the same orderList to determine the type of pizza to make whent the reaching the end of orderList
         if (_orderIndex >= OrderManager.Instance.orderList(_character).Count)
         {
@@ -117,68 +103,56 @@ public class SousChef : MonoBehaviour
 
     private void updateChefCharateristic()
     {
-        if (_isCharacteristicUpdatable)
+        if (!_progressBar.isActive & _isChefAwake)
         {
             if (_character == 0) // Chef X
             {
-                lazinessMeter();
+                laziness();
             }
             else // Chef Y
             {
                 // Chef Y characteristic
             }
         }
-        _isCharacteristicUpdatable = true;
     }
 
-    private void lazinessMeter()
+    private void laziness()
     {
-        _currentPhase++; // Change to next phase of characteristic (getting sleepier)
-        if (_currentPhase < _characterSO.numberOfPhases)
-        {
-            _progressBarFill.color = _characterSO.progressBarColors[_currentPhase];// Change progressBar color
-            _completionTime += _completionTime * _characterSO.characteristicScaler;// set completionTime = completionTime x chracteristicScaler + completionTime
-        }
-        else // The Chef is sleeping
-        {
-            _isChefAwake = false;
-            _sleepingSound.Play();
-            _sleepingTextObject = Instantiate(_sleepingTextPrefab, _textParent);
-            _sleepingTextObject.transform.localPosition = Vector3.zero;
+        _isChefAwake = false;
+        _progressBar.gameObject.SetActive(false);
+        _sleepingSound.Play();
+        _sleepingTextObject = Instantiate(_sleepingTextPrefab, _textParent);
+        _sleepingTextObject.transform.localPosition = Vector3.zero;
 
-            _floatingCoroutine = StartCoroutine(FloatingTextRoutine());
-        }
+        _floatingCoroutine = StartCoroutine(FloatingTextRoutine());
     }
 
     private void onGettingHit()
     {
-        _sleepingSound.Stop();
         _angryMeowSound.Play();
-        _currentPhase = 0;
-        if (_character == 0) // Chef X
+        if (!_isChefAwake)
         {
-            if (_sleepingTextObject != null)
+            _progressBar.gameObject.SetActive(true);
+            if (_character == 0) // Chef X
             {
-                if (_floatingCoroutine != null)
+                _sleepingSound.Stop();
+                if (_sleepingTextObject != null)
                 {
-                    StopCoroutine(_floatingCoroutine);
+                    if (_floatingCoroutine != null)
+                    {
+                        StopCoroutine(_floatingCoroutine);
+                    }
+                    Destroy(_sleepingTextObject);
                 }
-                Destroy(_sleepingTextObject);
+                _progressBar.resetActiveness();
             }
-            
-            _progressBarFill.color = _characterSO.progressBarColors[_currentPhase];
-            _completionTime = _characterSO.completionTime;
-            if (_timerInstance != null)
+            else // Chef Y
             {
-                _timerInstance.timeLimit = _completionTime;
+                
             }
         }
-        else // Chef Y
-        {
             
-        }
         _isChefAwake = true;
-        _isCharacteristicUpdatable = false;
     }
 
         private IEnumerator FloatingTextRoutine()

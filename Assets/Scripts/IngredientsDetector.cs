@@ -118,8 +118,6 @@ public class IngredientsDetector : MonoBehaviour
         //
         //Debug.Log("Removed " + ingredient.name + "; " + _fixedJoints.Count);
         //
-        // Destroy the Fixed Joint components
-        Destroy(_fixedJoints[ingredient.GetInstanceID()]);
         _fixedJoints.Remove(ingredient.GetInstanceID());
         //
         ingredient.transform.SetParent(this.gameObject.transform.root.parent); // Set the ingredient gameobject's parent to the root scene
@@ -129,10 +127,13 @@ public class IngredientsDetector : MonoBehaviour
         //ingredient.GetComponent<Rigidbody>().angularDrag = 0.05f;
         //ingredient.GetComponent<Rigidbody>().isKinematic = false;
 
-        addedIngredients[ingredient.name]--;
         if (addedIngredients[ingredient.name] <= 0)
         {
             addedIngredients.Remove(ingredient.name);
+        }
+        else
+        {
+            addedIngredients[ingredient.name]--;
         }
     }
 
