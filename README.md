@@ -3,14 +3,17 @@
 
 
 <h1>Grab A Pie</h1>
+
 ![](https://github.com/MartyChouette/Purrfect_Pizza_VR/blob/main/GIFS/PPDISPLAY1.gif)
 
 
 <h1>Throw on The requested ingredients</h1>
+
 ![](https://github.com/MartyChouette/Purrfect_Pizza_VR/blob/main/GIFS/PPINGRED2%20.gif)
 
 
 <h1>Deliver it</h1>
+
 ![](https://github.com/MartyChouette/Purrfect_Pizza_VR/blob/main/GIFS/PPMOVE3.gif)
 
 
@@ -19,6 +22,7 @@
 
 
 <h1>Cutting Station I never integreated into gameplay</h1>
+
 ![](https://github.com/MartyChouette/Purrfect_Pizza_VR/blob/main/GIFS/PPVRCUT.gif)
 
 
