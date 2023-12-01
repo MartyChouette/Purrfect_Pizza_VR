@@ -4,7 +4,6 @@
 
 
 
-
 <h1>Grab A Pie</h1>
 
 ![](https://github.com/MartyChouette/Purrfect_Pizza_VR/blob/main/GIFS/PPDISPLAY1.gif)
@@ -30,6 +29,13 @@
 
 
 
++Unity ver. 202.3.22f1
++meta quest 2
+
+Use the grip button to select the menu buttons.
+Move pizzas from the conveyor belt to the ingredient station.
+Use triggers to select and pick up ingredients from the ingredient box and drop them onto the pizza.
+When all ingredients are fulfilled move the pizza to the finish station.
 
 
 
