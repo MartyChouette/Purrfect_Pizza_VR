@@ -1,7 +1,7 @@
 # BaseProjectVR"# VRGame" 
 
 
-![](https://github.com/MartyChouette/Purrfect_Pizza_VR/blob/main/GIFS/PPINIT.gif)
+
 
 ![](https://github.com/MartyChouette/Purrfect_Pizza_VR/blob/main/GIFS/PPDISPLAY1.gif)
 
