@@ -29,7 +29,7 @@
 
 
 
-+Unity ver. 202.3.22f1
++Unity ver. 2020.3.22f1
 +meta quest 2
 
 Use the grip button to select the menu buttons.
